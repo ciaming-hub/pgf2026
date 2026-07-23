@@ -1,390 +1,226 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Refraksi + Soal Analisis</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: linear-gradient(145deg, #f5f9ff 0%, #dae3f0 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
-            box-shadow: 0 25px 40px rgba(0, 20, 40, 0.35);
-            padding: 25px 30px 30px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        h1 {
-            text-align: center;
-            font-weight: 600;
-            font-size: 2rem;
-            color: #0b2b44;
-            margin-top: 5px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        h1 small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #2c5778;
-            background: rgba(60, 110, 160, 0.15);
-            padding: 2px 14px;
-            border-radius: 40px;
-        }
-        .canvas-wrapper {
-            background: #ffffff;
-            border-radius: 28px;
-            padding: 16px 16px 10px 16px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 10px 20px rgba(0, 20, 30, 0.15);
-            margin-bottom: 20px;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: auto;
-            aspect-ratio: 800 / 400;
-            background: #f0f7fe;
-            border-radius: 20px;
-            cursor: grab;
-            touch-action: none;
-            border: 1px solid rgba(200, 215, 235, 0.6);
-        }
-        .control-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 18px 20px;
-            margin: 18px 0 12px 0;
-            background: rgba(220, 235, 250, 0.5);
-            padding: 18px 20px;
-            border-radius: 32px;
-            backdrop-filter: blur(4px);
-        }
-        .control-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .control-item label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e3f5c;
-            letter-spacing: 0.3px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .control-item label span {
-            background: #1e3f5c20;
-            padding: 0 10px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #10344e;
-        }
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, #3b7ca5, #6ba3d0);
-            border-radius: 10px;
-            -webkit-appearance: none;
-            appearance: none;
-            margin: 6px 0;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 20, 30, 0.3);
-            border: 2px solid #1a5276;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.12);
-            background: #eaf3fd;
-        }
-        .value-indicator {
-            text-align: center;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #0a314a;
-            background: white;
-            padding: 4px 0;
-            border-radius: 40px;
-            margin-top: 0px;
-            border: 1px solid #b6cfec;
-        }
-        .info-note {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #2a577a;
-            background: #d3e3f3;
-            padding: 8px 14px;
-            border-radius: 40px;
-            margin: 6px 0 4px 0;
-            display: inline-block;
-            backdrop-filter: blur(2px);
-        }
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        /* ===== SECTION SOAL ===== */
-        .quiz-section {
-            margin-top: 32px;
-            border-top: 2px dashed #98b9d6;
-            padding-top: 20px;
-        }
-        .quiz-section h2 {
-            color: #0b2b44;
-            font-weight: 600;
-            font-size: 1.5rem;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .quiz-section h2 small {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: #2c5778;
-            background: rgba(60, 110, 160, 0.12);
-            padding: 2px 14px;
-            border-radius: 40px;
-        }
-        .quiz-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin: 14px 0 18px 0;
-        }
-        .quiz-card {
-            background: white;
-            border-radius: 24px;
-            padding: 16px 18px 18px 18px;
-            box-shadow: 0 4px 12px rgba(0, 20, 30, 0.08);
-            border: 1px solid #d8e4f0;
-            transition: 0.15s;
-        }
-        .quiz-card:hover {
-            border-color: #9bb9d6;
-            box-shadow: 0 6px 18px rgba(0, 20, 30, 0.10);
-        }
-        .quiz-card .question {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #0f304b;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        .quiz-card .options {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .quiz-card .options label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: #1a405b;
-            padding: 4px 8px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .quiz-card .options label:hover {
-            background: #e7f0fa;
-        }
-        .quiz-card .options input[type="radio"] {
-            accent-color: #1a6b96;
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-        .quiz-card .feedback {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 40px;
-            background: #f0f5fb;
-            min-height: 28px;
-            transition: 0.15s;
-        }
-        .quiz-card .feedback.correct {
-            background: #d4edda;
-            color: #0e5c2e;
-        }
-        .quiz-card .feedback.wrong {
-            background: #f8dddd;
-            color: #a12121;
-        }
-        .quiz-card .feedback.empty {
-            color: #6a7f94;
-            font-style: italic;
-        }
-
-        .quiz-controls {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin: 8px 0 12px 0;
-        }
-        .quiz-controls button {
-            background: #1a5276;
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: 0.15s;
-            box-shadow: 0 4px 10px rgba(20, 60, 100, 0.2);
-        }
-        .quiz-controls button:hover {
-            background: #0f3f5e;
-            transform: scale(1.02);
-        }
-        .quiz-controls button.secondary {
-            background: #8ba9c7;
-            box-shadow: none;
-        }
-        .quiz-controls button.secondary:hover {
-            background: #6f91b0;
-        }
-        .quiz-score {
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #0b2b44;
-            background: #d3e3f3;
-            padding: 6px 20px;
-            border-radius: 40px;
-            display: inline-block;
-            margin: 0 auto;
-        }
-
-        /* form iframe */
-        .form-section {
-            margin-top: 28px;
-            border-top: 2px dashed #98b9d6;
-            padding-top: 18px;
-        }
-        .form-section iframe {
-            width: 100%;
-            height: 700px;
-            border: none;
-            border-radius: 28px;
-            background: white;
-            box-shadow: 0 6px 18px rgba(0, 20, 30, 0.12);
-        }
-
-        @media (max-width: 680px) {
-            .control-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .quiz-grid { grid-template-columns: 1fr; }
-            .container { padding: 18px 16px; }
-        }
-        @media (max-width: 480px) {
-            .control-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi Refraksi Cahaya + Google Form</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #f0f7fe 0%, #d4e2f2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 860px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(8px);
+      border-radius: 48px;
+      box-shadow: 0 20px 40px rgba(0, 20, 40, 0.25);
+      padding: 28px 30px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      font-size: 2.1rem;
+      color: #0b2b44;
+      margin-top: 0;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    h1 small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #1f4b6e;
+      background: rgba(60, 110, 160, 0.12);
+      padding: 4px 16px;
+      border-radius: 40px;
+    }
+    .canvas-wrapper {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 14px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.04), 0 10px 20px rgba(0, 20, 30, 0.12);
+      margin-bottom: 18px;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 800 / 400;
+      background: #eaf3fc;
+      border-radius: 18px;
+      cursor: grab;
+      touch-action: none;
+      border: 1px solid #c9ddec;
+    }
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px 20px;
+      margin: 16px 0 10px 0;
+      background: rgba(210, 230, 248, 0.5);
+      padding: 18px 18px;
+      border-radius: 32px;
+      backdrop-filter: blur(4px);
+    }
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .control-item label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1a3f5c;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .control-item label span {
+      background: #1a3f5c20;
+      padding: 0 12px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0e334e;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #2a6d96, #5f9bc9);
+      border-radius: 10px;
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 5px 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 20, 30, 0.3);
+      border: 2px solid #185074;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+      background: #f0f7ff;
+    }
+    .value-indicator {
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #09304a;
+      background: white;
+      padding: 3px 0;
+      border-radius: 40px;
+      border: 1px solid #b6cfec;
+    }
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 6px 0 4px 0;
+      gap: 8px;
+    }
+    .info-note {
+      font-size: 0.85rem;
+      color: #1e4a6b;
+      background: #d3e3f3;
+      padding: 6px 18px;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+      font-weight: 500;
+    }
+    .form-section {
+      margin-top: 32px;
+      border-top: 2px dashed #a6c2dd;
+      padding-top: 20px;
+    }
+    .form-section iframe {
+      width: 100%;
+      height: 700px;
+      border: none;
+      border-radius: 28px;
+      background: white;
+      box-shadow: 0 6px 20px rgba(0, 20, 30, 0.10);
+    }
+    @media (max-width: 680px) {
+      .control-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .container { padding: 18px 16px; }
+    }
+    @media (max-width: 460px) {
+      .control-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>
-        ⚡ Refraksi Cahaya
-        <small>Snell · interaktif</small>
-    </h1>
+  <h1>
+    ⚡ Refraksi Cahaya
+    <small>Hukum Snell</small>
+  </h1>
 
-    <div class="canvas-wrapper">
-        <canvas id="refractionCanvas" width="800" height="400"></canvas>
+  <div class="canvas-wrapper">
+    <canvas id="refractionCanvas" width="800" height="400"></canvas>
+  </div>
+
+  <!-- Kontrol Parameter -->
+  <div class="control-grid">
+    <div class="control-item">
+      <label>☀️ Sudut Datang (θ₁) <span id="angleDisplay">30°</span></label>
+      <input type="range" id="angleSlider" min="0" max="85" value="30" step="0.5">
+      <div class="value-indicator" id="angleValue">30.0°</div>
     </div>
-
-    <!-- Kontrol -->
-    <div class="control-grid">
-        <div class="control-item">
-            <label>☀️ Sudut Datang (θ₁) <span id="angleDisplay">30°</span></label>
-            <input type="range" id="angleSlider" min="0" max="85" value="30" step="0.5">
-            <div class="value-indicator" id="angleValue">30.0°</div>
-        </div>
-        <div class="control-item">
-            <label>🚀 Kecepatan datang (v₁) <span id="speedDisplay">1.00</span></label>
-            <input type="range" id="speedSlider" min="0.30" max="1.80" value="1.00" step="0.01">
-            <div class="value-indicator" id="speedValue">1.00 c</div>
-        </div>
-        <div class="control-item">
-            <label>🔍 Indeks bias (n₂) <span id="nDisplay">1.50</span></label>
-            <input type="range" id="nSlider" min="1.00" max="2.50" value="1.50" step="0.01">
-            <div class="value-indicator" id="nValue">1.50</div>
-        </div>
+    <div class="control-item">
+      <label>🚀 Kecepatan datang (v₁) <span id="speedDisplay">1.00</span></label>
+      <input type="range" id="speedSlider" min="0.30" max="1.80" value="1.00" step="0.01">
+      <div class="value-indicator" id="speedValue">1.00 c</div>
     </div>
-
-    <div class="footer">
-        <div class="info-note">⏺️ Medium 1 (udara) · n₁ = 1.00</div>
-        <div class="info-note" id="statusInfo">θ₂ = 19.5°  |  v₂ = 0.67 c</div>
+    <div class="control-item">
+      <label>🔍 Indeks bias (n₂) <span id="nDisplay">1.50</span></label>
+      <input type="range" id="nSlider" min="1.00" max="2.50" value="1.50" step="0.01">
+      <div class="value-indicator" id="nValue">1.50</div>
     </div>
+  </div>
 
-    <!-- ====== 10 SOAL PILIHAN GANDA ====== -->
-    <div class="quiz-section">
-        <h2>
-            📝 Soal Analisis Refraksi
-            <small>jawab berdasarkan simulasi</small>
-        </h2>
+  <!-- Info tambahan -->
+  <div class="info-bar">
+    <span class="info-note">⏺️ Medium 1 (udara) · n₁ = 1.00</span>
+    <span class="info-note" id="statusInfo">θ₂ = 19.5°  |  v₂ = 0.67 c</span>
+  </div>
 
-        <div class="quiz-grid" id="quizGrid">
-            <!-- Soal akan di-generate oleh JavaScript -->
-        </div>
-
-        <div class="quiz-controls">
-            <button id="checkAllBtn">✅ Periksa Semua</button>
-            <button id="resetQuizBtn" class="secondary">⟳ Reset Jawaban</button>
-        </div>
-        <div style="text-align: center;">
-            <span class="quiz-score" id="scoreDisplay">Skor: 0 / 10</span>
-        </div>
-    </div>
-
-    <!-- Google Form -->
-    <div class="form-section">
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd3lvRLJA6KCD5KCpIGi2wJaGXmNZMOLgEzx99b1NbKT68qbg/viewform?usp=header" 
-                title="Google Form Refraksi"
-                loading="lazy">
-        </iframe>
-    </div>
+  <!-- Google Form -->
+  <div class="form-section">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd3lvRLJA6KCD5KCpIGi2wJaGXmNZMOLgEzx99b1NbKT68qbg/viewform?usp=header" 
+            title="Google Form Refraksi"
+            loading="lazy">
+    </iframe>
+  </div>
 </div>
 
 <script>
-(function(){
-    // ==================== SIMULASI ====================
+  (function() {
+    // --- Elemen Canvas & Kontrol ---
     const canvas = document.getElementById('refractionCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -400,406 +236,281 @@
     const nValue = document.getElementById('nValue');
     const statusInfo = document.getElementById('statusInfo');
 
-    const n1 = 1.00;
+    const n1 = 1.00;  // indeks bias medium 1 (udara)
 
-    // fungsi draw (sama seperti sebelumnya)
+    // --- Fungsi gambar utama ---
     function drawSimulation() {
-        const theta1Deg = parseFloat(angleSlider.value);
-        const v1 = parseFloat(speedSlider.value);
-        const n2 = parseFloat(nSlider.value);
+      // Baca nilai dari slider
+      const theta1Deg = parseFloat(angleSlider.value);
+      const v1 = parseFloat(speedSlider.value);
+      const n2 = parseFloat(nSlider.value);
 
-        angleDisplay.textContent = `${theta1Deg}°`;
-        speedDisplay.textContent = v1.toFixed(2);
-        nDisplay.textContent = n2.toFixed(2);
-        angleValue.textContent = `${theta1Deg.toFixed(1)}°`;
-        speedValue.textContent = `${v1.toFixed(2)} c`;
-        nValue.textContent = n2.toFixed(2);
+      // Update tampilan angka
+      angleDisplay.textContent = `${theta1Deg}°`;
+      speedDisplay.textContent = v1.toFixed(2);
+      nDisplay.textContent = n2.toFixed(2);
+      angleValue.textContent = `${theta1Deg.toFixed(1)}°`;
+      speedValue.textContent = `${v1.toFixed(2)} c`;
+      nValue.textContent = n2.toFixed(2);
 
-        const theta1Rad = theta1Deg * Math.PI / 180;
-        const sinTheta1 = Math.sin(theta1Rad);
-        let sinTheta2 = (n1 / n2) * sinTheta1;
-        let theta2Rad = 0;
-        let totalInternalReflection = false;
+      // Perhitungan Snell: n1 * sin(θ1) = n2 * sin(θ2)
+      const theta1Rad = theta1Deg * Math.PI / 180;
+      const sinTheta1 = Math.sin(theta1Rad);
+      let sinTheta2 = (n1 / n2) * sinTheta1;
+      let theta2Rad = 0;
+      let totalInternalReflection = false;
 
-        if (sinTheta2 > 1) {
-            totalInternalReflection = true;
-            sinTheta2 = 1;
-            theta2Rad = Math.PI / 2;
-        } else {
-            theta2Rad = Math.asin(sinTheta2);
-        }
+      if (sinTheta2 > 1) {
+        totalInternalReflection = true;
+        sinTheta2 = 1;
+        theta2Rad = Math.PI / 2;
+      } else {
+        theta2Rad = Math.asin(sinTheta2);
+      }
 
-        const theta2Deg = theta2Rad * 180 / Math.PI;
-        const v2 = v1 * (n1 / n2);
+      const theta2Deg = theta2Rad * 180 / Math.PI;
+      const v2 = v1 * (n1 / n2);
 
-        if (totalInternalReflection && theta1Deg > 0) {
-            statusInfo.innerHTML = `⚠️ Pemantulan internal total · θ₂ = 90°  |  v₂ = ${v2.toFixed(2)} c`;
-        } else {
-            statusInfo.innerHTML = `θ₂ = ${theta2Deg.toFixed(1)}°  |  v₂ = ${v2.toFixed(2)} c`;
-        }
+      // Update status info
+      if (totalInternalReflection && theta1Deg > 0) {
+        statusInfo.innerHTML = `⚠️ Pemantulan internal total · θ₂ = 90°  |  v₂ = ${v2.toFixed(2)} c`;
+      } else {
+        statusInfo.innerHTML = `θ₂ = ${theta2Deg.toFixed(1)}°  |  v₂ = ${v2.toFixed(2)} c`;
+      }
 
-        const w = 800, h = 400;
-        ctx.clearRect(0, 0, w, h);
+      // --- Gambar canvas ---
+      const w = 800, h = 400;
+      ctx.clearRect(0, 0, w, h);
 
-        const grad = ctx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, '#d8e8fc');
-        grad.addColorStop(0.48, '#c2d9f0');
-        grad.addColorStop(0.52, '#b3d0ea');
-        grad.addColorStop(1, '#9bbde0');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, w, h);
+      // Latar gradasi
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#d4e6fc');
+      grad.addColorStop(0.48, '#c0d8ef');
+      grad.addColorStop(0.52, '#aecce6');
+      grad.addColorStop(1, '#92b8da');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
 
-        const midY = 200;
-        ctx.beginPath();
-        ctx.moveTo(0, midY);
-        ctx.lineTo(w, midY);
-        ctx.strokeStyle = '#1f3d5a';
-        ctx.lineWidth = 3.5;
-        ctx.setLineDash([]);
-        ctx.stroke();
+      // Garis batas medium (antar muka)
+      const midY = 200;
+      ctx.beginPath();
+      ctx.moveTo(0, midY);
+      ctx.lineTo(w, midY);
+      ctx.strokeStyle = '#1a3d5a';
+      ctx.lineWidth = 3.5;
+      ctx.setLineDash([]);
+      ctx.stroke();
 
-        ctx.font = '600 16px "Segoe UI", sans-serif';
-        ctx.fillStyle = '#10344e';
-        ctx.fillText('Medium 1  (n₁ = 1.00)', 30, 45);
-        ctx.fillStyle = '#1f4b6e';
-        ctx.fillText(`Medium 2  (n₂ = ${n2.toFixed(2)})`, 30, 370);
+      // Label medium
+      ctx.font = '600 15px "Segoe UI", sans-serif';
+      ctx.fillStyle = '#0f344e';
+      ctx.fillText('Medium 1  (n₁ = 1.00)', 30, 45);
+      ctx.fillStyle = '#1b4b6e';
+      ctx.fillText(`Medium 2  (n₂ = ${n2.toFixed(2)})`, 30, 370);
 
-        const cx = 250, cy = midY;
-        const lengthRay = 220;
-        let dx1 = -lengthRay * Math.sin(theta1Rad);
-        let dy1 = -lengthRay * Math.cos(theta1Rad);
-        if (theta1Deg === 0) { dx1 = 0; dy1 = -lengthRay; }
+      // Titik pusat (asal sinar)
+      const cx = 250, cy = midY;
+      const lengthRay = 220;
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + dx1, cy + dy1);
-        ctx.strokeStyle = '#f9b81b';
-        ctx.lineWidth = 4;
-        ctx.shadowColor = '#f9b81b50';
-        ctx.shadowBlur = 14;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+      // --- Sinar datang (kuning) ---
+      let dx1 = -lengthRay * Math.sin(theta1Rad);
+      let dy1 = -lengthRay * Math.cos(theta1Rad);
+      if (theta1Deg === 0) { dx1 = 0; dy1 = -lengthRay; }
 
-        const arrowPos = 0.65;
-        const ax = cx + dx1 * arrowPos;
-        const ay = cy + dy1 * arrowPos;
-        const angleArrow = Math.atan2(dy1, dx1);
-        ctx.fillStyle = '#f9b81b';
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(ax - 12 * Math.cos(angleArrow - 0.5), ay - 12 * Math.sin(angleArrow - 0.5));
-        ctx.lineTo(ax - 12 * Math.cos(angleArrow + 0.5), ay - 12 * Math.sin(angleArrow + 0.5));
-        ctx.closePath();
-        ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + dx1, cy + dy1);
+      ctx.strokeStyle = '#f9b81b';
+      ctx.lineWidth = 4.5;
+      ctx.shadowColor = '#f9b81b60';
+      ctx.shadowBlur = 16;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
 
-        ctx.font = '500 16px "Segoe UI", sans-serif';
-        ctx.fillStyle = '#b45f06';
-        ctx.fillText(`θ₁ = ${theta1Deg.toFixed(1)}°`, cx - 80, cy - 30);
+      // Panah pada sinar datang
+      const arrowPos = 0.65;
+      const ax = cx + dx1 * arrowPos;
+      const ay = cy + dy1 * arrowPos;
+      const angleArrow = Math.atan2(dy1, dx1);
+      ctx.fillStyle = '#f9b81b';
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(ax - 12 * Math.cos(angleArrow - 0.5), ay - 12 * Math.sin(angleArrow - 0.5));
+      ctx.lineTo(ax - 12 * Math.cos(angleArrow + 0.5), ay - 12 * Math.sin(angleArrow + 0.5));
+      ctx.closePath();
+      ctx.fill();
 
-        let dx2 = lengthRay * Math.sin(theta2Rad);
-        let dy2 = lengthRay * Math.cos(theta2Rad);
-        if (totalInternalReflection && theta1Deg > 0) {
-            dx2 = lengthRay * 1.0;
-            dy2 = 0;
-        } else if (theta1Deg === 0) {
-            dx2 = 0;
-            dy2 = lengthRay;
-        }
+      // Label θ₁
+      ctx.font = '500 16px "Segoe UI", sans-serif';
+      ctx.fillStyle = '#b45f06';
+      ctx.fillText(`θ₁ = ${theta1Deg.toFixed(1)}°`, cx - 90, cy - 30);
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + dx2, cy + dy2);
-        ctx.strokeStyle = '#1a8bc0';
-        ctx.lineWidth = 4.5;
-        ctx.shadowColor = '#1a8bc060';
-        ctx.shadowBlur = 16;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+      // --- Sinar bias (biru) ---
+      let dx2 = lengthRay * Math.sin(theta2Rad);
+      let dy2 = lengthRay * Math.cos(theta2Rad);
+      if (totalInternalReflection && theta1Deg > 0) {
+        dx2 = lengthRay * 1.0;
+        dy2 = 0;
+      } else if (theta1Deg === 0) {
+        dx2 = 0;
+        dy2 = lengthRay;
+      }
 
-        const arrowPos2 = 0.65;
-        const ax2 = cx + dx2 * arrowPos2;
-        const ay2 = cy + dy2 * arrowPos2;
-        const angleArrow2 = Math.atan2(dy2, dx2);
-        ctx.fillStyle = '#1a8bc0';
-        ctx.beginPath();
-        ctx.moveTo(ax2, ay2);
-        ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 - 0.5), ay2 - 12 * Math.sin(angleArrow2 - 0.5));
-        ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 + 0.5), ay2 - 12 * Math.sin(angleArrow2 + 0.5));
-        ctx.closePath();
-        ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + dx2, cy + dy2);
+      ctx.strokeStyle = '#1a8bc0';
+      ctx.lineWidth = 4.5;
+      ctx.shadowColor = '#1a8bc070';
+      ctx.shadowBlur = 18;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
 
-        ctx.font = '500 16px "Segoe UI", sans-serif';
-        ctx.fillStyle = '#005a8c';
-        if (totalInternalReflection && theta1Deg > 0) {
-            ctx.fillText('θ₂ = 90° (total internal)', cx + 30, cy + 45);
-        } else {
-            ctx.fillText(`θ₂ = ${theta2Deg.toFixed(1)}°`, cx + 30, cy + 45);
-        }
+      // Panah pada sinar bias
+      const arrowPos2 = 0.65;
+      const ax2 = cx + dx2 * arrowPos2;
+      const ay2 = cy + dy2 * arrowPos2;
+      const angleArrow2 = Math.atan2(dy2, dx2);
+      ctx.fillStyle = '#1a8bc0';
+      ctx.beginPath();
+      ctx.moveTo(ax2, ay2);
+      ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 - 0.5), ay2 - 12 * Math.sin(angleArrow2 - 0.5));
+      ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 + 0.5), ay2 - 12 * Math.sin(angleArrow2 + 0.5));
+      ctx.closePath();
+      ctx.fill();
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - 120);
-        ctx.lineTo(cx, cy + 120);
-        ctx.strokeStyle = '#345e7e';
-        ctx.lineWidth = 1.8;
-        ctx.setLineDash([6, 8]);
-        ctx.stroke();
-        ctx.setLineDash([]);
+      // Label θ₂
+      ctx.font = '500 16px "Segoe UI", sans-serif';
+      ctx.fillStyle = '#005a8c';
+      if (totalInternalReflection && theta1Deg > 0) {
+        ctx.fillText('θ₂ = 90° (total internal)', cx + 30, cy + 45);
+      } else {
+        ctx.fillText(`θ₂ = ${theta2Deg.toFixed(1)}°`, cx + 30, cy + 45);
+      }
 
-        ctx.beginPath();
-        ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
-        ctx.fillStyle = '#1d3e5e';
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = '#1d3e5e60';
-        ctx.fill();
-        ctx.shadowBlur = 0;
+      // Garis normal (putus-putus)
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 120);
+      ctx.lineTo(cx, cy + 120);
+      ctx.strokeStyle = '#2f5a7a';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([6, 8]);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-        ctx.font = '500 13px "Segoe UI", sans-serif';
-        ctx.fillStyle = '#1a405b';
-        ctx.fillText(`v₁ = ${v1.toFixed(2)} c`, 580, 70);
-        ctx.fillText(`v₂ = ${v2.toFixed(2)} c`, 580, 100);
-        ctx.fillStyle = '#1e4e6e';
-        ctx.fillText('n₁·sin θ₁ = n₂·sin θ₂', 580, 140);
+      // Titik pusat
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = '#1a3f5e';
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#1a3f5e60';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Informasi tambahan di kanan
+      ctx.font = '500 13px "Segoe UI", sans-serif';
+      ctx.fillStyle = '#1a405b';
+      ctx.fillText(`v₁ = ${v1.toFixed(2)} c`, 580, 70);
+      ctx.fillText(`v₂ = ${v2.toFixed(2)} c`, 580, 100);
+      ctx.fillStyle = '#1e4e6e';
+      ctx.fillText('n₁·sin θ₁ = n₂·sin θ₂', 580, 140);
     }
 
+    // --- Event listener untuk slider ---
     angleSlider.addEventListener('input', drawSimulation);
     speedSlider.addEventListener('input', drawSimulation);
     nSlider.addEventListener('input', drawSimulation);
 
-    // drag on canvas
+    // --- Interaksi drag pada canvas (ubah sudut) ---
     let isDragging = false;
     canvas.addEventListener('mousedown', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        const mouseY = (e.clientY - rect.top) * scaleX;
-        const cx = 250, cy = 200;
-        const dx = mouseX - cx;
-        const dy = mouseY - cy;
-        if (Math.sqrt(dx*dx + dy*dy) < 60) {
-            isDragging = true;
-            canvas.style.cursor = 'grabbing';
-            updateAngleFromMouse(e);
-        }
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleX;
+      const cx = 250, cy = 200;
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      if (Math.sqrt(dx*dx + dy*dy) < 60) {
+        isDragging = true;
+        canvas.style.cursor = 'grabbing';
+        updateAngleFromMouse(e);
+      }
     });
+
     window.addEventListener('mousemove', (e) => {
-        if (isDragging) updateAngleFromMouse(e);
+      if (isDragging) updateAngleFromMouse(e);
     });
+
     window.addEventListener('mouseup', () => {
-        if (isDragging) { isDragging = false; canvas.style.cursor = 'grab'; }
+      if (isDragging) { isDragging = false; canvas.style.cursor = 'grab'; }
     });
 
     function updateAngleFromMouse(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        const mouseY = (e.clientY - rect.top) * scaleX;
-        const cx = 250, cy = 200;
-        const dx = mouseX - cx;
-        const dy = mouseY - cy;
-        if (dy < 0 && dx < 0) {
-            let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
-            let angleDeg = angleRad * 180 / Math.PI;
-            if (angleDeg > 85) angleDeg = 85;
-            if (angleDeg < 0) angleDeg = 0;
-            angleSlider.value = angleDeg;
-            drawSimulation();
-        }
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleX;
+      const cx = 250, cy = 200;
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      // Hanya jika di kiri atas (kuadran II) agar sudut datang valid
+      if (dy < 0 && dx < 0) {
+        let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
+        let angleDeg = angleRad * 180 / Math.PI;
+        if (angleDeg > 85) angleDeg = 85;
+        if (angleDeg < 0) angleDeg = 0;
+        angleSlider.value = angleDeg;
+        drawSimulation();
+      }
     }
 
+    // Dukungan sentuh (mobile)
     canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const mouseX = (touch.clientX - rect.left) * scaleX;
-        const mouseY = (touch.clientY - rect.top) * scaleX;
-        const cx = 250, cy = 200;
-        const dx = mouseX - cx;
-        const dy = mouseY - cy;
-        if (Math.sqrt(dx*dx + dy*dy) < 80) {
-            isDragging = true;
-            updateAngleFromTouch(touch);
-        }
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (touch.clientX - rect.left) * scaleX;
+      const mouseY = (touch.clientY - rect.top) * scaleX;
+      const cx = 250, cy = 200;
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      if (Math.sqrt(dx*dx + dy*dy) < 80) {
+        isDragging = true;
+        updateAngleFromTouch(touch);
+      }
     }, { passive: false });
+
     canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (isDragging && e.touches.length > 0) updateAngleFromTouch(e.touches[0]);
+      e.preventDefault();
+      if (isDragging && e.touches.length > 0) updateAngleFromTouch(e.touches[0]);
     }, { passive: false });
+
     canvas.addEventListener('touchend', () => { isDragging = false; });
 
     function updateAngleFromTouch(touch) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const mouseX = (touch.clientX - rect.left) * scaleX;
-        const mouseY = (touch.clientY - rect.top) * scaleX;
-        const cx = 250, cy = 200;
-        const dx = mouseX - cx;
-        const dy = mouseY - cy;
-        if (dy < 0 && dx < 0) {
-            let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
-            let angleDeg = angleRad * 180 / Math.PI;
-            if (angleDeg > 85) angleDeg = 85;
-            if (angleDeg < 0) angleDeg = 0;
-            angleSlider.value = angleDeg;
-            drawSimulation();
-        }
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (touch.clientX - rect.left) * scaleX;
+      const mouseY = (touch.clientY - rect.top) * scaleX;
+      const cx = 250, cy = 200;
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      if (dy < 0 && dx < 0) {
+        let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
+        let angleDeg = angleRad * 180 / Math.PI;
+        if (angleDeg > 85) angleDeg = 85;
+        if (angleDeg < 0) angleDeg = 0;
+        angleSlider.value = angleDeg;
+        drawSimulation();
+      }
     }
 
+    // --- Inisialisasi tampilan ---
     drawSimulation();
     canvas.style.cursor = 'grab';
-
-    // ==================== SOAL PILIHAN GANDA ====================
-    const quizData = [
-        {
-            question: 'Jika sudut datang (θ₁) diperbesar dari 30° menjadi 60°, bagaimana perubahan sudut bias (θ₂) jika n₂ tetap?',
-            options: ['Semakin kecil', 'Semakin besar', 'Tetap', 'Menjadi nol'],
-            correct: 1
-        },
-        {
-            question: 'Jika indeks bias medium 2 (n₂) dinaikkan dari 1.50 menjadi 2.00, dengan θ₁ tetap, apa yang terjadi pada θ₂?',
-            options: ['θ₂ membesar', 'θ₂ mengecil', 'θ₂ tetap', 'θ₂ menjadi 90°'],
-            correct: 1
-        },
-        {
-            question: 'Pada simulasi, jika n₂ = 1.00 (sama dengan n₁), apa yang terjadi pada sinar bias?',
-            options: ['Membelok mendekati normal', 'Membelok menjauhi normal', 'Tidak membelok (lurus)', 'Memantul total'],
-            correct: 2
-        },
-        {
-            question: 'Saat terjadi pemantulan internal total, berapakah sudut bias (θ₂)?',
-            options: ['0°', '45°', '90°', 'Sama dengan θ₁'],
-            correct: 2
-        },
-        {
-            question: 'Jika kecepatan datang (v₁) diperbesar dari 1.00c menjadi 1.50c, bagaimana pengaruhnya terhadap θ₂? (n₂ tetap)',
-            options: ['θ₂ membesar', 'θ₂ mengecil', 'θ₂ tetap', 'Terjadi pemantulan total'],
-            correct: 2
-        },
-        {
-            question: 'Berdasarkan hukum Snell, jika n₂ > n₁, maka sinar bias akan ...',
-            options: ['Mendekati garis normal', 'Menjauhi garis normal', 'Tetap lurus', 'Berbalik arah'],
-            correct: 0
-        },
-        {
-            question: 'Jika θ₁ = 0° (sinar tegak lurus permukaan), berapakah θ₂?',
-            options: ['0°', '30°', '60°', '90°'],
-            correct: 0
-        },
-        {
-            question: 'Manakah yang benar tentang hubungan antara indeks bias dan kecepatan cahaya?',
-            options: ['n berbanding lurus dengan v', 'n berbanding terbalik dengan v', 'n tidak mempengaruhi v', 'n = v'],
-            correct: 1
-        },
-        {
-            question: 'Jika n₂ = 2.50 dan θ₁ = 40°, kira-kira θ₂ adalah ... (gunakan simulasi)',
-            options: ['15°', '25°', '35°', '45°'],
-            correct: 0
-        },
-        {
-            question: 'Apa yang terjadi pada sinar bias jika n₂ sangat besar (misal 3.00) dan θ₁ mendekati 85°?',
-            options: ['θ₂ mendekati 0°', 'θ₂ mendekati 90°', 'Terjadi pemantulan total', 'Sinar berhenti'],
-            correct: 2
-        }
-    ];
-
-    const quizGrid = document.getElementById('quizGrid');
-    const scoreDisplay = document.getElementById('scoreDisplay');
-
-    // render soal
-    function renderQuiz() {
-        quizGrid.innerHTML = '';
-        quizData.forEach((item, index) => {
-            const card = document.createElement('div');
-            card.className = 'quiz-card';
-            card.dataset.index = index;
-
-            const qDiv = document.createElement('div');
-            qDiv.className = 'question';
-            qDiv.textContent = `${index+1}. ${item.question}`;
-            card.appendChild(qDiv);
-
-            const optDiv = document.createElement('div');
-            optDiv.className = 'options';
-            const letters = ['A', 'B', 'C', 'D'];
-            item.options.forEach((opt, oi) => {
-                const label = document.createElement('label');
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = `q${index}`;
-                radio.value = oi;
-                radio.dataset.index = index;
-                radio.dataset.opt = oi;
-                label.appendChild(radio);
-                label.appendChild(document.createTextNode(`${letters[oi]}. ${opt}`));
-                optDiv.appendChild(label);
-            });
-            card.appendChild(optDiv);
-
-            const feedback = document.createElement('div');
-            feedback.className = 'feedback empty';
-            feedback.textContent = '⏳ Belum dijawab';
-            card.appendChild(feedback);
-
-            quizGrid.appendChild(card);
-        });
-    }
-
-    // cek jawaban
-    function checkAll() {
-        let correctCount = 0;
-        const cards = document.querySelectorAll('.quiz-card');
-        cards.forEach((card, idx) => {
-            const selected = card.querySelector(`input[name="q${idx}"]:checked`);
-            const feedback = card.querySelector('.feedback');
-            if (selected) {
-                const userAns = parseInt(selected.value);
-                const correctAns = quizData[idx].correct;
-                if (userAns === correctAns) {
-                    feedback.className = 'feedback correct';
-                    feedback.textContent = '✅ Benar!';
-                    correctCount++;
-                } else {
-                    feedback.className = 'feedback wrong';
-                    feedback.textContent = `❌ Salah. Jawaban benar: ${['A','B','C','D'][correctAns]}`;
-                }
-            } else {
-                feedback.className = 'feedback empty';
-                feedback.textContent = '⏳ Belum dijawab';
-            }
-        });
-        scoreDisplay.textContent = `Skor: ${correctCount} / 10`;
-    }
-
-    function resetQuiz() {
-        document.querySelectorAll('.quiz-card input[type="radio"]').forEach(radio => {
-            radio.checked = false;
-        });
-        document.querySelectorAll('.quiz-card .feedback').forEach(el => {
-            el.className = 'feedback empty';
-            el.textContent = '⏳ Belum dijawab';
-        });
-        scoreDisplay.textContent = 'Skor: 0 / 10';
-    }
-
-    // event listener tombol
-    document.getElementById('checkAllBtn').addEventListener('click', checkAll);
-    document.getElementById('resetQuizBtn').addEventListener('click', resetQuiz);
-
-    // auto-check ketika radio diubah (opsional)
-    document.addEventListener('change', (e) => {
-        if (e.target && e.target.matches('.quiz-card input[type="radio"]')) {
-            const card = e.target.closest('.quiz-card');
-            const feedback = card.querySelector('.feedback');
-            feedback.className = 'feedback empty';
-            feedback.textContent = '⏳ Periksa dengan tombol "Periksa Semua"';
-        }
-    });
-
-    // inisialisasi
-    renderQuiz();
-
-})();
+  })();
 </script>
-
 </body>
 </html>
