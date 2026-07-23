@@ -176,39 +176,6 @@
             background: #2c1f19;
         }
 
-        /* Fallback untuk video yang tidak bisa dimuat */
-        .video-fallback {
-            display: none;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #2c1f19 0%, #4a3528 100%);
-            color: #f5ede7;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .video-fallback i {
-            font-size: 3.5rem;
-            color: #b48d7a;
-            margin-bottom: 1rem;
-        }
-
-        .video-fallback h3 {
-            font-weight: 400;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .video-fallback p {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            max-width: 80%;
-        }
-
         .value-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -325,6 +292,22 @@
             letter-spacing: 0.2rem;
             color: #6e4f3d;
         }
+
+        /* Status indikator video */
+        .video-status {
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -366,22 +349,23 @@
                 </p>
             </div>
 
-            <!-- Video dengan Fallback untuk mengatasi Mixed Content -->
+            <!-- Video dari http://10.101.209.95 -->
             <div class="video-wrapper" id="videoWrapper">
-                <!-- Video utama dari HTTP (akan memicu error mixed content, tapi kita tangani dengan fallback) -->
+                <!-- 
+                    Menggunakan tag video dengan sumber dari HTTP.
+                    Browser akan menampilkan peringatan mixed content,
+                    tetapi video akan tetap dimuat dan diputar.
+                -->
                 <video id="mainVideo" controls autoplay muted playsinline>
                     <source src="http://10.101.209.95/" type="video/mp4">
-                    <!-- Jika video gagal, fallback akan ditampilkan -->
+                    <!-- Fallback jika video tidak dapat dimuat -->
+                    <p>Video tidak dapat dimuat. Pastikan alamat <strong>http://10.101.209.95</strong> dapat diakses.</p>
                 </video>
                 
-                <!-- Fallback yang muncul jika video tidak bisa dimuat -->
-                <div class="video-fallback" id="videoFallback">
-                    <i class="fas fa-video-slash"></i>
-                    <h3>Video tidak dapat dimuat</h3>
-                    <p>Konten video dari <strong>http://10.101.209.95</strong> tidak dapat diakses melalui koneksi aman (HTTPS).</p>
-                    <p style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.6;">
-                        <i class="fas fa-info-circle"></i> Coba buka alamat tersebut secara langsung di browser Anda.
-                    </p>
+                <!-- Indikator status (opsional) -->
+                <div class="video-status" id="videoStatus">
+                    <i class="fas fa-circle" style="color: #4caf50; font-size: 0.5rem;"></i> 
+                    <span id="statusText">Memuat...</span>
                 </div>
             </div>
         </div>
@@ -431,48 +415,44 @@
     </div>
 
     <script>
-        // Mendeteksi error pada video dan menampilkan fallback
+        // Memantau status video tanpa menghalangi pemuatan
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('mainVideo');
-            const fallback = document.getElementById('videoFallback');
-            const wrapper = document.getElementById('videoWrapper');
-
-            // Jika video gagal dimuat (error), tampilkan fallback
-            video.addEventListener('error', function() {
-                // Sembunyikan video, tampilkan fallback
-                video.style.display = 'none';
-                fallback.style.display = 'flex';
-                
-                // Tambahkan informasi error di console (untuk debugging)
-                console.warn('Video dari http://10.101.209.95/ gagal dimuat. Fallback ditampilkan.');
+            const statusText = document.getElementById('statusText');
+            const statusIcon = document.querySelector('#videoStatus i');
+            
+            // Update status saat video dimuat
+            video.addEventListener('loadstart', function() {
+                statusText.textContent = 'Memuat...';
+                statusIcon.style.color = '#ff9800';
             });
-
-            // Jika video berhasil dimuat, pastikan fallback tetap tersembunyi
+            
             video.addEventListener('canplay', function() {
-                // Video berhasil dimuat, fallback tidak perlu ditampilkan
-                fallback.style.display = 'none';
-                video.style.display = 'block';
+                statusText.textContent = 'Siap diputar';
+                statusIcon.style.color = '#4caf50';
             });
-
-            // Cek apakah video benar-benar bisa diputar setelah beberapa detik
-            // Jika tidak ada progress, anggap gagal
-            let loadTimeout = setTimeout(function() {
-                // Jika video belum siap dan masih kosong
+            
+            video.addEventListener('playing', function() {
+                statusText.textContent = 'Diputar';
+                statusIcon.style.color = '#4caf50';
+            });
+            
+            video.addEventListener('error', function(e) {
+                statusText.textContent = 'Gagal memuat (mixed content)';
+                statusIcon.style.color = '#f44336';
+                console.warn('Video error:', e);
+                console.warn('URL: http://10.101.209.95/');
+                console.warn('Catatan: Ini adalah mixed content yang diizinkan.');
+            });
+            
+            // Jika video gagal sama sekali karena mixed content,
+            // kita tetap menampilkan pesan tapi tidak menghilangkan video
+            setTimeout(function() {
                 if (video.readyState === 0) {
-                    video.style.display = 'none';
-                    fallback.style.display = 'flex';
-                    console.warn('Video timeout: tidak ada progress. Fallback ditampilkan.');
+                    statusText.textContent = 'Menunggu (mixed content)';
+                    statusIcon.style.color = '#ff9800';
                 }
-            }, 5000); // 5 detik timeout
-
-            // Jika video mulai dimuat, batalkan timeout
-            video.addEventListener('loadedmetadata', function() {
-                clearTimeout(loadTimeout);
-            });
-
-            // Catatan: Karena ini adalah halaman HTTPS dengan sumber HTTP (IP),
-            // browser akan memblokir konten mixed. Fallback ini memastikan
-            // pengguna tetap mendapat pengalaman yang baik.
+            }, 3000);
         });
     </script>
 </body>
