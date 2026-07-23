@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Aliran Benda dalam Fluida · Interaktif</title>
+    <!-- Google Font & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f2f0ed 0%, #e3ded9 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 250, 245, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 2.5rem;
+            padding: 2rem 2rem 2.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.12), 0 0 0 1px rgba(255, 245, 235, 0.5) inset;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.02em;
+            color: #2c1f19;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        h1 small {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #7a6253;
+            background: rgba(180, 141, 122, 0.12);
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.8rem 0 1.5rem;
+        }
+
+        @media (max-width: 780px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* KANVAS + KONTROL */
+        .canvas-wrapper {
+            background: #fcf9f6;
+            border-radius: 2rem;
+            padding: 1.2rem 1.2rem 0.8rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(220, 200, 185, 0.3);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 400 / 300;
+            background: #f4efe9;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .control-panel {
+            background: #fcf9f6;
+            border-radius: 2rem;
+            padding: 1.4rem 1.6rem 1.8rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(220, 200, 185, 0.3);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .slider-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .slider-item label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #3f2e24;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .slider-item label span:first-child i {
+            width: 1.4rem;
+            color: #8f6b5a;
+        }
+
+        .slider-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #ddd0c7;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .slider-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #8f6b5a;
+            border-radius: 30px;
+            cursor: pointer;
+            border: 2px solid #f5ede7;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .value-badge {
+            font-weight: 600;
+            color: #2c1f19;
+            background: #ede6df;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: #ede6df;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 500;
+            color: #3f2e24;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #8f6b5a;
+            color: white;
+            box-shadow: 0 4px 8px rgba(143, 107, 90, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: #7a5b4b;
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: #cbb4a6;
+        }
+
+        .btn-outline:hover {
+            background: #ede6df;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .status-info {
+            margin-top: 0.8rem;
+            background: #f4ede7;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            font-size: 0.9rem;
+            color: #2c1f19;
+            display: inline-block;
+        }
+
+        /* SOAL INTERAKTIF */
+        .quiz-section {
+            margin-top: 2.2rem;
+            border-top: 1px solid rgba(160, 130, 115, 0.15);
+            padding-top: 1.8rem;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .quiz-header h2 {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #2c1f19;
+        }
+
+        .quiz-header .progress {
+            font-weight: 400;
+            color: #7a6253;
+            background: #ede6df;
+            padding: 0.2rem 1.2rem;
+            border-radius: 40px;
+        }
+
+        .question-card {
+            background: #fcf9f6;
+            border-radius: 1.8rem;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(220, 200, 185, 0.2);
+            margin-bottom: 1.2rem;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #2c1f19;
+            margin-bottom: 0.6rem;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+            margin: 0.6rem 0 0.2rem;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 400;
+            color: #3f2e24;
+            background: #f4ede7;
+            padding: 0.3rem 1.2rem 0.3rem 0.8rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .options label:hover {
+            background: #e8dfd7;
+        }
+
+        .options input[type="radio"] {
+            accent-color: #8f6b5a;
+            width: 16px;
+            height: 16px;
+        }
+
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .quiz-nav .btn {
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .answer-feedback {
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            color: #5a3f31;
+            font-weight: 400;
+        }
+
+        .spreadsheet-status {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: #5e7a5a;
+            background: #e6eee3;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .spreadsheet-status i {
+            color: #3f6b3a;
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #8a7568;
+            text-align: center;
+            border-top: 1px solid rgba(160, 130, 115, 0.1);
+            padding-top: 1rem;
+        }
+
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <h1>
+        <i class="fas fa-water" style="color: #5f8b9b;"></i> Aliran Benda dalam Fluida
+        <small>Simulasi · Viskositas & Massa Jenis</small>
+    </h1>
+
+    <!-- GRID: KANVAS + KONTROL -->
+    <div class="grid-2">
+        <!-- KANVAS -->
+        <div class="canvas-wrapper">
+            <canvas id="fluidCanvas" width="400" height="300"></canvas>
+            <div style="display: flex; justify-content: space-between; margin-top: 0.3rem; font-size: 0.8rem; color: #7a6253; padding: 0 0.2rem;">
+                <span><i class="fas fa-arrow-down"></i> gaya gravitasi</span>
+                <span><i class="fas fa-tint"></i> viskositas &rho;f , &rho;b</span>
+            </div>
+        </div>
+
+        <!-- KONTROL SLIDER -->
+        <div class="control-panel">
+            <div class="slider-group">
+                <div class="slider-item">
+                    <label>
+                        <span><i class="fas fa-oil-can"></i> Viskositas (η)</span>
+                        <span class="value-badge" id="viscosityLabel">0.50</span>
+                    </label>
+                    <input type="range" id="viscositySlider" min="0.05" max="1.50" step="0.01" value="0.50">
+                </div>
+                <div class="slider-item">
+                    <label>
+                        <span><i class="fas fa-cube"></i> Massa jenis benda (ρ<sub>b</sub>)</span>
+                        <span class="value-badge" id="densityObjLabel">1.20</span>
+                    </label>
+                    <input type="range" id="densityObjSlider" min="0.40" max="2.20" step="0.02" value="1.20">
+                </div>
+                <div class="slider-item">
+                    <label>
+                        <span><i class="fas fa-flask"></i> Massa jenis fluida (ρ<sub>f</sub>)</span>
+                        <span class="value-badge" id="densityFluidLabel">1.00</span>
+                    </label>
+                    <input type="range" id="densityFluidSlider" min="0.40" max="2.00" step="0.02" value="1.00">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="resetSimBtn"><i class="fas fa-redo-alt"></i> Reset posisi</button>
+                <button class="btn btn-outline" id="toggleSimBtn"><i class="fas fa-pause"></i> <span id="simToggleLabel">Jeda</span></button>
+                <span class="status-info" id="statusInfo"><i class="fas fa-circle" style="color: #5f8b5f; font-size: 0.6rem;"></i> Berjalan</span>
+            </div>
+
+            <div style="margin-top: 0.6rem; font-size: 0.85rem; color: #5a453a;">
+                <i class="fas fa-arrows-alt-v"></i> Kecepatan terminal dipengaruhi η & Δρ
+            </div>
+        </div>
+    </div>
+
+    <!-- QUIZ: 10 SOAL INTERAKTIF -->
+    <div class="quiz-section">
+        <div class="quiz-header">
+            <h2><i class="fas fa-pencil-alt" style="color: #8f6b5a;"></i> 10 Soal Pemahaman</h2>
+            <span class="progress" id="quizProgress">0 / 10 terjawab</span>
+        </div>
+
+        <div id="questionContainer">
+            <!-- akan di-render oleh js -->
+        </div>
+
+        <div class="quiz-nav">
+            <div class="flex-wrap">
+                <button class="btn btn-outline" id="prevQuestionBtn"><i class="fas fa-chevron-left"></i> Sebelum</button>
+                <button class="btn btn-outline" id="nextQuestionBtn">Selanjutnya <i class="fas fa-chevron-right"></i></button>
+                <button class="btn btn-primary" id="submitQuizBtn"><i class="fas fa-save"></i> Simpan ke Google Sheet</button>
+            </div>
+            <span id="answerFeedback" class="answer-feedback"><i class="fas fa-info-circle"></i> Pilih jawaban untuk setiap soal</span>
+        </div>
+
+        <div id="spreadsheetStatus" class="spreadsheet-status">
+            <i class="fas fa-check-circle"></i> <span id="statusText">Menunggu penyimpanan</span>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-database"></i> Jawaban tersimpan di Google Sheets · Simulasi interaktif
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---- KANVAS SIMULASI ----
+        const canvas = document.getElementById('fluidCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 400, H = 300;
+
+        // Parameter fisik
+        let viscosity = 0.50;
+        let rhoBenda = 1.20;
+        let rhoFluida = 1.00;
+
+        // Posisi benda (y)
+        let yPos = 60;          // posisi awal (dari atas)
+        let vy = 0;
+        const radius = 16;
+        const g = 0.12;          // gravitasi (skala)
+        const baseDrag = 0.02;
+
+        // Kontrol simulasi
+        let simulationActive = true;
+        let animationId = null;
+
+        // Elemen slider
+        const viscositySlider = document.getElementById('viscositySlider');
+        const densityObjSlider = document.getElementById('densityObjSlider');
+        const densityFluidSlider = document.getElementById('densityFluidSlider');
+        const viscosityLabel = document.getElementById('viscosityLabel');
+        const densityObjLabel = document.getElementById('densityObjLabel');
+        const densityFluidLabel = document.getElementById('densityFluidLabel');
+        const statusInfo = document.getElementById('statusInfo');
+        const toggleBtn = document.getElementById('toggleSimBtn');
+        const toggleLabel = document.getElementById('simToggleLabel');
+        const resetBtn = document.getElementById('resetSimBtn');
+
+        // Update slider labels
+        function updateLabels() {
+            viscosityLabel.textContent = viscosity.toFixed(2);
+            densityObjLabel.textContent = rhoBenda.toFixed(2);
+            densityFluidLabel.textContent = rhoFluida.toFixed(2);
+        }
+
+        // Baca slider
+        function readSliders() {
+            viscosity = parseFloat(viscositySlider.value);
+            rhoBenda = parseFloat(densityObjSlider.value);
+            rhoFluida = parseFloat(densityFluidSlider.value);
+            updateLabels();
+        }
+
+        // Reset posisi
+        function resetPosition() {
+            yPos = 60;
+            vy = 0;
+        }
+
+        // Gambar ulang
+        function drawScene() {
+            ctx.clearRect(0, 0, W, H);
+
+            // background gradasi (fluida)
+            const grad = ctx.createLinearGradient(0, 0, 0, H);
+            grad.addColorStop(0, '#dae8ed');
+            grad.addColorStop(0.6, '#b8cfd8');
+            grad.addColorStop(1, '#9bbcc7');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            // garis permukaan
+            ctx.beginPath();
+            ctx.moveTo(0, 30);
+            ctx.lineTo(W, 30);
+            ctx.strokeStyle = '#6b8f9b';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // "benda" – lingkaran dengan gradasi
+            const x = 120;
+            const y = Math.min(H - radius, Math.max(radius, yPos));
+
+            // bayangan
+            ctx.shadowColor = 'rgba(0,0,0,0.08)';
+            ctx.shadowBlur = 14;
+            ctx.shadowOffsetY = 4;
+            const gradient = ctx.createRadialGradient(x-4, y-6, 4, x, y, radius+4);
+            gradient.addColorStop(0, '#e67e5e');
+            gradient.addColorStop(0.7, '#c95f3f');
+            gradient.addColorStop(1, '#a3452a');
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+
+            // highlight
+            ctx.beginPath();
+            ctx.arc(x-5, y-6, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255,240,220,0.3)';
+            ctx.fill();
+
+            // informasi kecepatan
+            ctx.font = '500 12px Inter, sans-serif';
+            ctx.fillStyle = '#1f2e33';
+            ctx.fillText('benda', x-20, y+32);
+            ctx.fillStyle = '#1f2e33';
+            ctx.fillText('v = ' + vy.toFixed(2), x-20, y+48);
+
+            // label viskositas & densitas
+            ctx.font = '500 11px Inter, sans-serif';
+            ctx.fillStyle = '#1f3a42';
+            ctx.fillText('η = ' + viscosity.toFixed(2), 10, 20);
+            ctx.fillText('ρb = ' + rhoBenda.toFixed(2), 10, 38);
+            ctx.fillText('ρf = ' + rhoFluida.toFixed(2), 10, 56);
+        }
+
+        // Update fisika
+        function updatePhysics() {
+            if (!simulationActive) return;
+
+            // Gaya apung & hambatan (sederhana)
+            const deltaRho = rhoBenda - rhoFluida;
+            const buoyancy = deltaRho * 0.018;    // gaya apung efektif
+            const drag = viscosity * 0.022 * vy;   // hambatan viskos
+
+            // percepatan (gravitasi - buoyancy - drag)
+            const acc = g - buoyancy - drag;
+
+            vy += acc * 0.5;
+            // batas kecepatan
+            if (vy > 2.5) vy = 2.5;
+            if (vy < -1.0) vy = -1.0;
+
+            yPos += vy * 0.9;
+
+            // pantulan batas
+            if (yPos > H - radius) {
+                yPos = H - radius;
+                vy = -vy * 0.3;
+            }
+            if (yPos < radius + 10) {
+                yPos = radius + 10;
+                vy = -vy * 0.2;
+            }
+            // batas bawah
+            if (yPos > H - radius) yPos = H - radius;
+        }
+
+        // Loop animasi
+        function animate() {
+            readSliders();
+            updatePhysics();
+            drawScene();
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Event slider
+        viscositySlider.addEventListener('input', () => {
+            readSliders();
+        });
+        densityObjSlider.addEventListener('input', () => {
+            readSliders();
+        });
+        densityFluidSlider.addEventListener('input', () => {
+            readSliders();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resetPosition();
+            readSliders();
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            simulationActive = !simulationActive;
+            toggleLabel.textContent = simulationActive ? 'Jeda' : 'Lanjut';
+            statusInfo.innerHTML = simulationActive ? '<i class="fas fa-circle" style="color: #5f8b5f; font-size: 0.6rem;"></i> Berjalan' : '<i class="fas fa-circle" style="color: #b08a7a; font-size: 0.6rem;"></i> Dihentikan';
+        });
+
+        // Mulai animasi
+        animate();
+
+        // ---- QUIZ 10 SOAL ----
+        const questions = [
+            { q: 'Apa yang dimaksud dengan viskositas?', options: ['Kekentalan fluida', 'Massa jenis fluida', 'Gaya apung', 'Tekanan fluida'], correct: 0 },
+            { q: 'Jika massa jenis benda > massa jenis fluida, benda akan …', options: ['Melayang', 'Tenggelam', 'Mengapung', 'Berhenti'], correct: 1 },
+            { q: 'Viskositas yang lebih tinggi menyebabkan …', options: ['Kecepatan terminal lebih besar', 'Kecepatan terminal lebih kecil', 'Tidak berpengaruh', 'Benda bergerak lebih cepat'], correct: 1 },
+            { q: 'Gaya apung pada fluida bergantung pada …', options: ['Massa jenis benda', 'Massa jenis fluida', 'Viskositas', 'Semua benar'], correct: 3 },
+            { q: 'Jika massa jenis benda sama dengan fluida, benda akan …', options: ['Tenggelam', 'Mengapung', 'Melayang', 'Terbang'], correct: 2 },
+            { q: 'Kecepatan terminal terjadi ketika …', options: ['Gaya gravitasi > gaya apung', 'Gaya total = 0', 'Viskositas = 0', 'Massa jenis benda = 0'], correct: 1 },
+            { q: 'Viskositas fluida dipengaruhi oleh …', options: ['Suhu', 'Tekanan', 'Massa jenis', 'Semua benar'], correct: 3 },
+            { q: 'Benda dengan volume besar akan mendapat gaya apung …', options: ['Lebih besar', 'Lebih kecil', 'Sama saja', 'Tergantung bentuk'], correct: 0 },
+            { q: 'Fluida dengan viskositas tinggi contohnya adalah …', options: ['Air', 'Minyak', 'Alkohol', 'Udara'], correct: 1 },
+            { q: 'Pada simulasi ini, massa jenis fluida diatur dengan slider. Jika ρf dinaikkan, benda cenderung …', options: ['Tenggelam lebih cepat', 'Mengapung lebih mudah', 'Tetap sama', 'Bergerak ke samping'], correct: 1 }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null); // simpan indeks jawaban
+
+        const questionContainer = document.getElementById('questionContainer');
+        const quizProgress = document.getElementById('quizProgress');
+        const answerFeedback = document.getElementById('answerFeedback');
+        const prevBtn = document.getElementById('prevQuestionBtn');
+        const nextBtn = document.getElementById('nextQuestionBtn');
+        const submitBtn = document.getElementById('submitQuizBtn');
+        const statusText = document.getElementById('statusText');
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            let html = `<div class="question-card"><div class="question-text">${index+1}. ${q.q}</div><div class="options">`;
+            q.options.forEach((opt, i) => {
+                const checked = (userAnswers[index] === i) ? 'checked' : '';
+                html += `<label><input type="radio" name="q${index}" value="${i}" ${checked}> ${opt}</label>`;
+            });
+            html += `</div></div>`;
+            questionContainer.innerHTML = html;
+
+            // Event listener untuk radio
+            const radios = questionContainer.querySelectorAll(`input[name="q${index}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    const val = parseInt(e.target.value);
+                    userAnswers[index] = val;
+                    updateProgress();
+                    // feedback singkat
+                    const isCorrect = (val === q.correct);
+                    answerFeedback.innerHTML = isCorrect ? '<i class="fas fa-check-circle" style="color:#4f8a4f;"></i> Jawaban benar!' : '<i class="fas fa-edit"></i> Jawaban tercatat';
+                });
+            });
+
+            // Jika sudah ada jawaban sebelumnya, tampilkan feedback
+            if (userAnswers[index] !== null) {
+                const selected = userAnswers[index];
+                const isCorrect = (selected === q.correct);
+                answerFeedback.innerHTML = isCorrect ? '<i class="fas fa-check-circle" style="color:#4f8a4f;"></i> Jawaban benar!' : '<i class="fas fa-edit"></i> Jawaban tercatat';
+            } else {
+                answerFeedback.innerHTML = '<i class="fas fa-info-circle"></i> Pilih jawaban';
+            }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answered = userAnswers.filter(a => a !== null).length;
+            quizProgress.textContent = `${answered} / ${questions.length} terjawab`;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion(currentQuestionIndex);
+            }
+        });
+
+        // ---- SIMPAN KE GOOGLE SHEETS (Web App) ----
+        // Ganti URL dengan URL deployment Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_N9w7K07QYvzF24DyKOL3RQUbLm0Uhc6NpLrFwUC4QHZSCE2_n24eIq4b5mSBpFMT/exec';
+
+        submitBtn.addEventListener('click', function() {
+            // Cek apakah semua soal sudah dijawab
+            const unanswered = userAnswers.some(a => a === null);
+            if (unanswered) {
+                alert('Harap jawab semua 10 soal terlebih dahulu.');
+                return;
+            }
+
+            // Kumpulkan data
+            const payload = {
+                timestamp: new Date().toISOString(),
+                answers: userAnswers.map((ans, idx) => {
+                    return {
+                        question: questions[idx].q,
+                        selected: questions[idx].options[ans],
+                        correct: questions[idx].options[questions[idx].correct],
+                        isCorrect: (ans === questions[idx].correct)
+                    };
+                }),
+                // tambahkan parameter simulasi
+                viscosity: viscosity,
+                rhoBenda: rhoBenda,
+                rhoFluida: rhoFluida
+            };
+
+            // Kirim ke Google Sheets
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // karena kita tidak perlu response
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusText.textContent = '✅ Jawaban berhasil disimpan ke Google Sheets!';
+                statusText.style.color = '#3f6b3a';
+            })
+            .catch((err) => {
+                statusText.textContent = '⚠️ Gagal menyimpan. Periksa URL Script.';
+                statusText.style.color = '#b05a4a';
+                console.warn('Error:', err);
+            });
+        });
+
+        // Inisialisasi quiz pertama
+        renderQuestion(0);
+
+        // Tampilkan status awal
+        statusText.textContent = 'Menunggu penyimpanan';
+
+        // update slider label awal
+        readSliders();
+    })();
+</script>
+
+<!-- GANTI SCRIPT_URL dengan link Google Apps Script web app Anda -->
+<!-- Contoh: https://script.google.com/macros/s/AKfycbz.../exec -->
+
+</body>
+</html>
