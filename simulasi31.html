@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FaceMesh · Toshiba Satellite L510</title>
-    <!-- Google Fonts -->
+    <title>Webcam · Toshiba Satellite L510</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
@@ -27,18 +26,16 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 2.5rem;
             padding: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
         }
 
-        /* Header dengan Brand Toshiba */
         .header {
             display: flex;
             justify-content: space-between;
@@ -54,29 +51,28 @@
             gap: 1rem;
         }
 
-        .toshiba-brand {
+        .brand {
             display: flex;
             align-items: center;
             gap: 0.6rem;
             color: #fff;
             font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 0.05em;
+            font-size: 1rem;
             background: rgba(255, 255, 255, 0.05);
             padding: 0.3rem 1rem 0.3rem 0.8rem;
             border-radius: 40px;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .toshiba-brand i {
+        .brand i {
             color: #e31b23;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
 
         .header h1 {
             color: #fff;
             font-weight: 600;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
@@ -84,10 +80,9 @@
 
         .header h1 i {
             color: #6c8cff;
-            font-size: 1.6rem;
         }
 
-        .header .status {
+        .status {
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.8rem;
             background: rgba(255, 255, 255, 0.05);
@@ -99,7 +94,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .header .status .dot {
+        .dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -107,15 +102,13 @@
             animation: pulse 1.5s infinite;
         }
 
-        .header .status .dot.active {
+        .dot.active {
             background: #4caf50;
         }
-
-        .header .status .dot.inactive {
+        .dot.inactive {
             background: #f44336;
         }
-
-        .header .status .dot.loading {
+        .dot.loading {
             background: #ff9800;
         }
 
@@ -131,7 +124,6 @@
             }
         }
 
-        /* Video wrapper */
         .video-wrapper {
             position: relative;
             border-radius: 1.8rem;
@@ -151,18 +143,6 @@
             transform: scaleX(-1);
         }
 
-        .video-wrapper canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: block;
-            pointer-events: none;
-            transform: scaleX(-1);
-        }
-
-        /* Device info overlay */
         .device-info {
             position: absolute;
             top: 12px;
@@ -173,8 +153,6 @@
             border-radius: 30px;
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.7rem;
-            font-weight: 400;
-            letter-spacing: 0.03em;
             border: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 5;
             pointer-events: none;
@@ -185,60 +163,23 @@
 
         .device-info i {
             color: #6c8cff;
-            font-size: 0.8rem;
         }
-
         .device-info strong {
             color: #fff;
             font-weight: 600;
         }
 
-        /* FPS counter di video */
-        .fps-overlay {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.7rem;
-            font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        .fps-overlay span {
-            color: #6c8cff;
-            font-weight: 600;
-        }
-
-        /* Controls */
         .controls {
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem;
             margin-top: 1.2rem;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .controls-left {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        .controls-right {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn {
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.5rem;
             border-radius: 40px;
             border: none;
             font-family: 'Inter', sans-serif;
@@ -248,7 +189,7 @@
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             background: rgba(255, 255, 255, 0.06);
             color: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -256,7 +197,7 @@
 
         .btn:hover {
             background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         .btn-primary {
@@ -264,10 +205,8 @@
             color: #fff;
             border-color: #6c8cff;
         }
-
         .btn-primary:hover {
             background: #5a7ae8;
-            border-color: #5a7ae8;
         }
 
         .btn-danger {
@@ -275,10 +214,8 @@
             color: #fff;
             border-color: #ff6b6b;
         }
-
         .btn-danger:hover {
             background: #e55555;
-            border-color: #e55555;
         }
 
         .btn-success {
@@ -286,51 +223,23 @@
             color: #fff;
             border-color: #4caf50;
         }
-
         .btn-success:hover {
             background: #3d9e40;
-            border-color: #3d9e40;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: #fff;
+            border-color: #ff9800;
+        }
+        .btn-warning:hover {
+            background: #e68900;
         }
 
         .btn i {
             font-size: 0.9rem;
         }
 
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.8rem;
-            margin-top: 1.2rem;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 1.2rem;
-            padding: 0.6rem 1rem;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .stat-item .label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        .stat-item .value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
-            margin-top: 0.1rem;
-        }
-
-        .stat-item .value .highlight {
-            color: #6c8cff;
-        }
-
-        /* Fallback */
         .fallback {
             display: none;
             position: absolute;
@@ -369,7 +278,39 @@
             max-width: 80%;
         }
 
-        /* Responsive */
+        .btn-retry {
+            margin-top: 1rem;
+            padding: 0.6rem 1.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-retry:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .info-box {
+            margin-top: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+        }
+
+        .info-box i {
+            color: #6c8cff;
+            margin-right: 0.5rem;
+        }
+
         @media (max-width: 650px) {
             .container {
                 padding: 1rem;
@@ -382,23 +323,14 @@
             .header h1 {
                 font-size: 1.1rem;
             }
-            .toshiba-brand {
-                font-size: 0.9rem;
-            }
             .controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .controls-left,
-            .controls-right {
-                justify-content: center;
-            }
             .btn {
-                padding: 0.4rem 0.9rem;
-                font-size: 0.75rem;
-            }
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
+                justify-content: center;
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
             }
             .device-info {
                 font-size: 0.6rem;
@@ -413,13 +345,13 @@
         <!-- HEADER -->
         <div class="header">
             <div class="header-left">
-                <div class="toshiba-brand">
+                <div class="brand">
                     <i class="fas fa-laptop"></i>
                     TOSHIBA
                 </div>
                 <h1>
-                    <i class="fas fa-face-smile"></i>
-                    FaceMesh
+                    <i class="fas fa-camera"></i>
+                    Webcam
                 </h1>
             </div>
             <div class="status">
@@ -431,679 +363,208 @@
         <!-- VIDEO WRAPPER -->
         <div class="video-wrapper" id="videoWrapper">
             <video id="webcam" autoplay playsinline></video>
-            <canvas id="overlay"></canvas>
 
-            <!-- Device Info -->
             <div class="device-info">
                 <i class="fas fa-microchip"></i>
-                <strong>Toshiba Satellite L510</strong>
+                <strong>Satellite L510</strong>
                 <span style="opacity:0.5;">|</span>
                 <i class="fas fa-camera"></i>
                 <span>Webcam</span>
             </div>
 
-            <!-- FPS -->
-            <div class="fps-overlay">
-                <i class="fas fa-chart-line"></i> <span id="fpsOverlay">0</span> FPS
-            </div>
-
-            <!-- Fallback -->
             <div class="fallback" id="fallback">
                 <i class="fas fa-video-slash"></i>
-                <h3>Webcam tidak tersedia</h3>
-                <p id="fallbackText">Pastikan webcam laptop Toshiba Satellite L510 terhubung dan izinkan akses kamera.</p>
+                <h3>Webcam tidak aktif</h3>
+                <p id="fallbackText">Pastikan webcam laptop Toshiba Satellite L510 terhubung.</p>
+                <button class="btn-retry" id="retryBtn">
+                    <i class="fas fa-redo"></i> Coba Lagi
+                </button>
             </div>
         </div>
 
         <!-- CONTROLS -->
         <div class="controls">
-            <div class="controls-left">
-                <button class="btn btn-primary" id="startBtn">
-                    <i class="fas fa-play"></i> Mulai
-                </button>
-                <button class="btn btn-danger" id="stopBtn">
-                    <i class="fas fa-stop"></i> Hentikan
-                </button>
-                <button class="btn" id="snapshotBtn">
-                    <i class="fas fa-camera"></i> Foto
-                </button>
-            </div>
-            <div class="controls-right">
-                <button class="btn" id="fullscreenBtn">
-                    <i class="fas fa-expand"></i>
-                </button>
-                <button class="btn btn-success" id="toggleMeshBtn">
-                    <i class="fas fa-circle-nodes"></i> <span id="meshLabel">Sembunyikan</span>
-                </button>
-            </div>
+            <button class="btn btn-primary" id="startBtn">
+                <i class="fas fa-play"></i> Mulai Webcam
+            </button>
+            <button class="btn btn-danger" id="stopBtn">
+                <i class="fas fa-stop"></i> Hentikan
+            </button>
+            <button class="btn btn-success" id="snapshotBtn">
+                <i class="fas fa-camera"></i> Ambil Foto
+            </button>
+            <button class="btn btn-warning" id="fullscreenBtn">
+                <i class="fas fa-expand"></i> Layar Penuh
+            </button>
         </div>
 
-        <!-- STATS -->
-        <div class="stats">
-            <div class="stat-item">
-                <div class="label">Wajah Terdeteksi</div>
-                <div class="value" id="faceCount">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="label">Keypoints</div>
-                <div class="value"><span class="highlight" id="keypointCount">0</span> / 468</div>
-            </div>
-            <div class="stat-item">
-                <div class="label">Resolusi</div>
-                <div class="value" id="resolution" style="font-size:0.85rem;">-</div>
-            </div>
-            <div class="stat-item">
-                <div class="label">Status Deteksi</div>
-                <div class="value" id="detectionStatus" style="font-size:0.85rem; color:#ff9800;">● Menunggu</div>
-            </div>
+        <!-- INFO -->
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            Untuk Toshiba Satellite L510 · Gunakan Chrome, Edge, atau Firefox
         </div>
     </div>
-
-    <!-- ===== MEDIAPIPE FACE MESH ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous">
-    </script>
 
     <script>
         (function() {
             'use strict';
 
-            // ===== DOM ELEMENTS =====
+            // ===== DOM =====
             const video = document.getElementById('webcam');
-            const canvas = document.getElementById('overlay');
-            const ctx = canvas.getContext('2d');
             const fallback = document.getElementById('fallback');
             const fallbackText = document.getElementById('fallbackText');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
-            const faceCountEl = document.getElementById('faceCount');
-            const keypointCountEl = document.getElementById('keypointCount');
-            const fpsOverlayEl = document.getElementById('fpsOverlay');
-            const detectionStatusEl = document.getElementById('detectionStatus');
-            const resolutionEl = document.getElementById('resolution');
 
             const startBtn = document.getElementById('startBtn');
             const stopBtn = document.getElementById('stopBtn');
             const snapshotBtn = document.getElementById('snapshotBtn');
             const fullscreenBtn = document.getElementById('fullscreenBtn');
-            const toggleMeshBtn = document.getElementById('toggleMeshBtn');
-            const meshLabel = document.getElementById('meshLabel');
+            const retryBtn = document.getElementById('retryBtn');
 
-            // ===== STATE =====
-            let faceMesh = null;
-            let camera = null;
+            let stream = null;
             let isRunning = false;
-            let showMesh = true;
-            let frameCount = 0;
-            let lastFpsUpdate = performance.now();
-
-            // ===== RESIZE CANVAS =====
-            function resizeCanvas() {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                canvas.width = rect.width;
-                canvas.height = rect.height;
-            }
-
-            window.addEventListener('resize', resizeCanvas);
 
             // ===== UPDATE STATUS =====
-            function setStatus(text, state = 'active') {
+            function setStatus(text, state = 'loading') {
                 statusText.textContent = text;
                 statusDot.className = 'dot ' + state;
             }
 
-            // ===== FACE MESH CALLBACK =====
-            function onResults(results) {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ===== MULAI WEBCAM =====
+            async function startWebcam() {
+                try {
+                    setStatus('Mengakses kamera...', 'loading');
+                    fallback.style.display = 'none';
 
-                // Update face count
-                const faceCount = results.multiFaceLandmarks ? results.multiFaceLandmarks.length : 0;
-                faceCountEl.textContent = faceCount;
+                    // Coba dengan constraint dasar untuk kompatibilitas maksimal
+                    const constraints = {
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            facingMode: 'user'
+                        },
+                        audio: false
+                    };
 
-                if (faceCount > 0) {
-                    detectionStatusEl.textContent = '● Terdeteksi';
-                    detectionStatusEl.style.color = '#4caf50';
-                    keypointCountEl.textContent = results.multiFaceLandmarks[0].length || 0;
-
-                    // Update resolusi dari video
-                    if (video.videoWidth) {
-                        resolutionEl.textContent = video.videoWidth + '×' + video.videoHeight;
+                    // Hentikan stream lama
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                        stream = null;
                     }
 
-                    // Draw mesh jika aktif
-                    if (showMesh) {
-                        for (const landmarks of results.multiFaceLandmarks) {
-                            // Gambar titik-titik
-                            for (const landmark of landmarks) {
-                                const x = landmark.x * canvas.width;
-                                const y = landmark.y * canvas.height;
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = stream;
+                    await video.play();
 
-                                ctx.beginPath();
-                                ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
-                                ctx.fillStyle = 'rgba(108, 140, 255, 0.8)';
-                                ctx.fill();
-                            }
+                    isRunning = true;
+                    setStatus('Webcam aktif ✅', 'active');
+                    fallback.style.display = 'none';
 
-                            // Gambar koneksi
-                            drawConnections(landmarks);
-                        }
+                    console.log('Webcam Toshiba Satellite L510 berhasil diaktifkan');
+                    console.log('Resolusi:', video.videoWidth + '×' + video.videoHeight);
+
+                } catch (err) {
+                    console.error('Error webcam:', err);
+                    setStatus('Gagal ❌', 'inactive');
+                    fallback.style.display = 'flex';
+                    isRunning = false;
+
+                    // Pesan error yang informatif
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        fallbackText.textContent = 'Izin kamera ditolak. Klik ikon kunci di address bar dan izinkan kamera.';
+                    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        fallbackText.textContent = 'Webcam tidak terdeteksi. Pastikan webcam Toshiba Satellite L510 terpasang dan driver terinstal.';
+                    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                        fallbackText.textContent = 'Webcam sedang digunakan oleh aplikasi lain. Tutup aplikasi yang menggunakan kamera.';
+                    } else if (err.name === 'OverconstrainedError') {
+                        fallbackText.textContent = 'Resolusi tidak didukung. Coba gunakan pengaturan default.';
+                    } else {
+                        fallbackText.textContent = 'Error: ' + err.message;
                     }
-                } else {
-                    detectionStatusEl.textContent = '● Tidak ada wajah';
-                    detectionStatusEl.style.color = '#ff9800';
-                    keypointCountEl.textContent = '0';
-                }
-
-                // Update FPS
-                frameCount++;
-                const now = performance.now();
-                if (now - lastFpsUpdate > 1000) {
-                    fpsOverlayEl.textContent = frameCount;
-                    frameCount = 0;
-                    lastFpsUpdate = now;
                 }
             }
 
-            // ===== GAMBAR KONEKSI FACE MESH =====
-            function drawConnections(landmarks) {
-                // Koneksi utama FaceMesh (subset untuk performa)
-                const connections = [
-                    [0, 1],
-                    [1, 2],
-                    [2, 3],
-                    [3, 4],
-                    [4, 5],
-                    [5, 6],
-                    [6, 7],
-                    [7, 8],
-                    [8, 9],
-                    [9, 10],
-                    [10, 11],
-                    [11, 12],
-                    [12, 13],
-                    [13, 14],
-                    [14, 15],
-                    [15, 16],
-                    [16, 17],
-                    [17, 18],
-                    [18, 19],
-                    [19, 20],
-                    [20, 21],
-                    [21, 22],
-                    [22, 23],
-                    [23, 24],
-                    [24, 25],
-                    [25, 26],
-                    [26, 27],
-                    [27, 28],
-                    [28, 29],
-                    [29, 30],
-                    [30, 31],
-                    [31, 32],
-                    [32, 33],
-                    [33, 34],
-                    [34, 35],
-                    [35, 36],
-                    [36, 37],
-                    [37, 38],
-                    [38, 39],
-                    [39, 40],
-                    [40, 41],
-                    [41, 42],
-                    [42, 43],
-                    [43, 44],
-                    [44, 45],
-                    [45, 46],
-                    [46, 47],
-                    [47, 48],
-                    [48, 49],
-                    [49, 50],
-                    [50, 51],
-                    [51, 52],
-                    [52, 53],
-                    [53, 54],
-                    [54, 55],
-                    [55, 56],
-                    [56, 57],
-                    [57, 58],
-                    [58, 59],
-                    [59, 60],
-                    [60, 61],
-                    [61, 62],
-                    [62, 63],
-                    [63, 64],
-                    [64, 65],
-                    [65, 66],
-                    [66, 67],
-                    [67, 68],
-                    [68, 69],
-                    [69, 70],
-                    [70, 71],
-                    [71, 72],
-                    [72, 73],
-                    [73, 74],
-                    [74, 75],
-                    [75, 76],
-                    [76, 77],
-                    [77, 78],
-                    [78, 79],
-                    [79, 80],
-                    [80, 81],
-                    [81, 82],
-                    [82, 83],
-                    [83, 84],
-                    [84, 85],
-                    [85, 86],
-                    [86, 87],
-                    [87, 88],
-                    [88, 89],
-                    [89, 90],
-                    [90, 91],
-                    [91, 92],
-                    [92, 93],
-                    [93, 94],
-                    [94, 95],
-                    [95, 96],
-                    [96, 97],
-                    [97, 98],
-                    [98, 99],
-                    [99, 100],
-                    [100, 101],
-                    [101, 102],
-                    [102, 103],
-                    [103, 104],
-                    [104, 105],
-                    [105, 106],
-                    [106, 107],
-                    [107, 108],
-                    [108, 109],
-                    [109, 110],
-                    [110, 111],
-                    [111, 112],
-                    [112, 113],
-                    [113, 114],
-                    [114, 115],
-                    [115, 116],
-                    [116, 117],
-                    [117, 118],
-                    [118, 119],
-                    [119, 120],
-                    [120, 121],
-                    [121, 122],
-                    [122, 123],
-                    [123, 124],
-                    [124, 125],
-                    [125, 126],
-                    [126, 127],
-                    [127, 128],
-                    [128, 129],
-                    [129, 130],
-                    [130, 131],
-                    [131, 132],
-                    [132, 133],
-                    [133, 134],
-                    [134, 135],
-                    [135, 136],
-                    [136, 137],
-                    [137, 138],
-                    [138, 139],
-                    [139, 140],
-                    [140, 141],
-                    [141, 142],
-                    [142, 143],
-                    [143, 144],
-                    [144, 145],
-                    [145, 146],
-                    [146, 147],
-                    [147, 148],
-                    [148, 149],
-                    [149, 150],
-                    [150, 151],
-                    [151, 152],
-                    [152, 153],
-                    [153, 154],
-                    [154, 155],
-                    [155, 156],
-                    [156, 157],
-                    [157, 158],
-                    [158, 159],
-                    [159, 160],
-                    [160, 161],
-                    [161, 162],
-                    [162, 163],
-                    [163, 164],
-                    [164, 165],
-                    [165, 166],
-                    [166, 167],
-                    [167, 168],
-                    [168, 169],
-                    [169, 170],
-                    [170, 171],
-                    [171, 172],
-                    [172, 173],
-                    [173, 174],
-                    [174, 175],
-                    [175, 176],
-                    [176, 177],
-                    [177, 178],
-                    [178, 179],
-                    [179, 180],
-                    [180, 181],
-                    [181, 182],
-                    [182, 183],
-                    [183, 184],
-                    [184, 185],
-                    [185, 186],
-                    [186, 187],
-                    [187, 188],
-                    [188, 189],
-                    [189, 190],
-                    [190, 191],
-                    [191, 192],
-                    [192, 193],
-                    [193, 194],
-                    [194, 195],
-                    [195, 196],
-                    [196, 197],
-                    [197, 198],
-                    [198, 199],
-                    [199, 200],
-                    [200, 201],
-                    [201, 202],
-                    [202, 203],
-                    [203, 204],
-                    [204, 205],
-                    [205, 206],
-                    [206, 207],
-                    [207, 208],
-                    [208, 209],
-                    [209, 210],
-                    [210, 211],
-                    [211, 212],
-                    [212, 213],
-                    [213, 214],
-                    [214, 215],
-                    [215, 216],
-                    [216, 217],
-                    [217, 218],
-                    [218, 219],
-                    [219, 220],
-                    [220, 221],
-                    [221, 222],
-                    [222, 223],
-                    [223, 224],
-                    [224, 225],
-                    [225, 226],
-                    [226, 227],
-                    [227, 228],
-                    [228, 229],
-                    [229, 230],
-                    [230, 231],
-                    [231, 232],
-                    [232, 233],
-                    [233, 234],
-                    [234, 235],
-                    [235, 236],
-                    [236, 237],
-                    [237, 238],
-                    [238, 239],
-                    [239, 240],
-                    [240, 241],
-                    [241, 242],
-                    [242, 243],
-                    [243, 244],
-                    [244, 245],
-                    [245, 246],
-                    [246, 247],
-                    [247, 248],
-                    [248, 249],
-                    [249, 250],
-                    [250, 251],
-                    [251, 252],
-                    [252, 253],
-                    [253, 254],
-                    [254, 255],
-                    [255, 256],
-                    [256, 257],
-                    [257, 258],
-                    [258, 259],
-                    [259, 260],
-                    [260, 261],
-                    [261, 262],
-                    [262, 263],
-                    [263, 264],
-                    [264, 265],
-                    [265, 266],
-                    [266, 267],
-                    [267, 268],
-                    [268, 269],
-                    [269, 270],
-                    [270, 271],
-                    [271, 272],
-                    [272, 273],
-                    [273, 274],
-                    [274, 275],
-                    [275, 276],
-                    [276, 277],
-                    [277, 278],
-                    [278, 279],
-                    [279, 280],
-                    [280, 281],
-                    [281, 282],
-                    [282, 283],
-                    [283, 284],
-                    [284, 285],
-                    [285, 286],
-                    [286, 287],
-                    [287, 288],
-                    [288, 289],
-                    [289, 290],
-                    [290, 291],
-                    [291, 292],
-                    [292, 293],
-                    [293, 294],
-                    [294, 295],
-                    [295, 296],
-                    [296, 297],
-                    [297, 298],
-                    [298, 299],
-                    [299, 300],
-                    [300, 301],
-                    [301, 302],
-                    [302, 303],
-                    [303, 304],
-                    [304, 305],
-                    [305, 306],
-                    [306, 307],
-                    [307, 308],
-                    [308, 309],
-                    [309, 310],
-                    [310, 311],
-                    [311, 312],
-                    [312, 313],
-                    [313, 314],
-                    [314, 315],
-                    [315, 316],
-                    [316, 317],
-                    [317, 318],
-                    [318, 319],
-                    [319, 320],
-                    [320, 321],
-                    [321, 322],
-                    [322, 323],
-                    [323, 324],
-                    [324, 325],
-                    [325, 326],
-                    [326, 327],
-                    [327, 328],
-                    [328, 329],
-                    [329, 330],
-                    [330, 331],
-                    [331, 332],
-                    [332, 333],
-                    [333, 334],
-                    [334, 335],
-                    [335, 336],
-                    [336, 337],
-                    [337, 338],
-                    [338, 339],
-                    [339, 340],
-                    [340, 341],
-                    [341, 342],
-                    [342, 343],
-                    [343, 344],
-                    [344, 345],
-                    [345, 346],
-                    [346, 347],
-                    [347, 348],
-                    [348, 349],
-                    [349, 350],
-                    [350, 351],
-                    [351, 352],
-                    [352, 353],
-                    [353, 354],
-                    [354, 355],
-                    [355, 356],
-                    [356, 357],
-                    [357, 358],
-                    [358, 359],
-                    [359, 360],
-                    [360, 361],
-                    [361, 362],
-                    [362, 363],
-                    [363, 364],
-                    [364, 365],
-                    [365, 366],
-                    [366, 367],
-                    [367, 368],
-                    [368, 369],
-                    [369, 370],
-                    [370, 371],
-                    [371, 372],
-                    [372, 373],
-                    [373, 374],
-                    [374, 375],
-                    [375, 376],
-                    [376, 377],
-                    [377, 378],
-                    [378, 379],
-                    [379, 380],
-                    [380, 381],
-                    [381, 382],
-                    [382, 383],
-                    [383, 384],
-                    [384, 385],
-                    [385, 386],
-                    [386, 387],
-                    [387, 388],
-                    [388, 389],
-                    [389, 390],
-                    [390, 391],
-                    [391, 392],
-                    [392, 393],
-                    [393, 394],
-                    [394, 395],
-                    [395, 396],
-                    [396, 397],
-                    [397, 398],
-                    [398, 399],
-                    [399, 400],
-                    [400, 401],
-                    [401, 402],
-                    [402, 403],
-                    [403, 404],
-                    [404, 405],
-                    [405, 406],
-                    [406, 407],
-                    [407, 408],
-                    [408, 409],
-                    [409, 410],
-                    [410, 411],
-                    [411, 412],
-                    [412, 413],
-                    [413, 414],
-                    [414, 415],
-                    [415, 416],
-                    [416, 417],
-                    [417, 418],
-                    [418, 419],
-                    [419, 420],
-                    [420, 421],
-                    [421, 422],
-                    [422, 423],
-                    [423, 424],
-                    [424, 425],
-                    [425, 426],
-                    [426, 427],
-                    [427, 428],
-                    [428, 429],
-                    [429, 430],
-                    [430, 431],
-                    [431, 432],
-                    [432, 433],
-                    [433, 434],
-                    [434, 435],
-                    [435, 436],
-                    [436, 437],
-                    [437, 438],
-                    [438, 439],
-                    [439, 440],
-                    [440, 441],
-                    [441, 442],
-                    [442, 443],
-                    [443, 444],
-                    [444, 445],
-                    [445, 446],
-                    [446, 447],
-                    [447, 448],
-                    [448, 449],
-                    [449, 450],
-                    [450, 451],
-                    [451, 452],
-                    [452, 453],
-                    [453, 454],
-                    [454, 455],
-                    [455, 456],
-                    [456, 457],
-                    [457, 458],
-                    [458, 459],
-                    [459, 460],
-                    [460, 461],
-                    [461, 462],
-                    [462, 463],
-                    [463, 464],
-                    [464, 465],
-                    [465, 466],
-                    [466, 467]
-                ];
+            // ===== HENTIKAN WEBCAM =====
+            function stopWebcam() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                video.srcObject = null;
+                isRunning = false;
+                setStatus('Dihentikan', 'inactive');
+                fallback.style.display = 'flex';
+                fallbackText.textContent = 'Webcam dihentikan. Klik "Mulai Webcam" untuk mengaktifkan kembali.';
+            }
 
-                ctx.strokeStyle = 'rgba(108, 140, 255, 0.25)';
-                ctx.lineWidth = 0.8;
-
-                for (const [i, j] of connections) {
-                    if (i < landmarks.length && j < landmarks.length) {
-                        const p1 = landmarks[i];
-                        const p2 = landmarks[j];
-                        const x1 = p1.x * canvas.width;
-                        const y1 = p1.y * canvas.height;
-                        const x2 = p2.x * canvas.width;
-                        const y2 = p2.y * canvas.height;
-
-                        ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.stroke();
-                    }
+            // ===== AMBIL FOTO =====
+            function takeSnapshot() {
+                if (!isRunning || !stream) {
+                    alert('Webcam belum aktif. Mulai webcam terlebih dahulu.');
+                    return;
                 }
 
-                // Gambar titik dengan warna berbeda
-                for (let i = 0; i < landmarks.length; i++) {
-                    const p = landmarks[i];
-                    const x = p.x * canvas.width;
-                    const y = p.y * canvas.height;
+                const canvas = document.createElement('canvas');
+                const width = video.videoWidth || 640;
+                const height = video.videoHeight || 480;
+                canvas.width = width;
+                canvas.height = height;
 
-                    let color = 'rgba
+                const ctx = canvas.getContext('2d');
+                // Mirror untuk selfie
+                ctx.translate(width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, 0, 0, width, height);
+
+                const link = document.createElement('a');
+                link.download = `webcam_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+
+            // ===== FULLSCREEN =====
+            function toggleFullscreen() {
+                const wrapper = document.getElementById('videoWrapper');
+                if (!document.fullscreenElement) {
+                    wrapper.requestFullscreen?.() || wrapper.webkitRequestFullscreen?.();
+                } else {
+                    document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+                }
+            }
+
+            // ===== EVENT LISTENERS =====
+            startBtn.addEventListener('click', startWebcam);
+            stopBtn.addEventListener('click', stopWebcam);
+            snapshotBtn.addEventListener('click', takeSnapshot);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            retryBtn.addEventListener('click', startWebcam);
+
+            // ===== INIT =====
+            // Cek dukungan webcam
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                setStatus('Tidak didukung ❌', 'inactive');
+                fallback.style.display = 'flex';
+                fallbackText.textContent = 'Browser Anda tidak mendukung WebRTC. Gunakan Chrome, Edge, atau Firefox.';
+            } else {
+                // Auto-start setelah 1 detik
+                setTimeout(startWebcam, 1000);
+            }
+
+            // ===== CLEANUP =====
+            window.addEventListener('beforeunload', function() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            });
+
+            // ===== DEBUG =====
+            console.log('Toshiba Satellite L510 Webcam Controller');
+            console.log('Browser:', navigator.userAgent);
+            console.log('MediaDevices tersedia:', !!navigator.mediaDevices);
+
+        })();
+    </script>
+
+</body>
+</html>
