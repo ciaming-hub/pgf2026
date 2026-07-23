@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Refraksi Cahaya Interaktif</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f5f9ff 0%, #dae3f0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 820px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            box-shadow: 0 25px 40px rgba(0, 20, 40, 0.35);
+            padding: 25px 30px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.2s;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            font-size: 2rem;
+            color: #0b2b44;
+            margin-top: 5px;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #2c5778;
+            background: rgba(60, 110, 160, 0.15);
+            padding: 2px 14px;
+            border-radius: 40px;
+        }
+        .canvas-wrapper {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 16px 16px 10px 16px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.06), 0 10px 20px rgba(0, 20, 30, 0.15);
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 800 / 400;
+            background: #f0f7fe;
+            border-radius: 20px;
+            cursor: grab;
+            touch-action: none;
+            border: 1px solid rgba(200, 215, 235, 0.6);
+        }
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px 20px;
+            margin: 18px 0 12px 0;
+            background: rgba(220, 235, 250, 0.5);
+            padding: 18px 20px;
+            border-radius: 32px;
+            backdrop-filter: blur(4px);
+        }
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .control-item label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e3f5c;
+            letter-spacing: 0.3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .control-item label span {
+            background: #1e3f5c20;
+            padding: 0 10px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #10344e;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #3b7ca5, #6ba3d0);
+            border-radius: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 6px 0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 20, 30, 0.3);
+            border: 2px solid #1a5276;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            background: #eaf3fd;
+        }
+        .value-indicator {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0a314a;
+            background: white;
+            padding: 4px 0;
+            border-radius: 40px;
+            margin-top: 0px;
+            border: 1px solid #b6cfec;
+        }
+        .form-section {
+            margin-top: 28px;
+            border-top: 2px dashed #98b9d6;
+            padding-top: 18px;
+        }
+        .form-section iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+            border-radius: 28px;
+            background: white;
+            box-shadow: 0 6px 18px rgba(0, 20, 30, 0.12);
+            transition: 0.2s;
+        }
+        .info-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #2a577a;
+            background: #d3e3f3;
+            padding: 8px 14px;
+            border-radius: 40px;
+            margin: 6px 0 4px 0;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        @media (max-width: 680px) {
+            .control-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .container {
+                padding: 18px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>
+        ⚡ Refraksi Cahaya
+        <small>Snell · interaktif</small>
+    </h1>
+
+    <div class="canvas-wrapper">
+        <canvas id="refractionCanvas" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Kontrol -->
+    <div class="control-grid">
+        <div class="control-item">
+            <label>☀️ Sudut Datang (θ₁) <span id="angleDisplay">30°</span></label>
+            <input type="range" id="angleSlider" min="0" max="85" value="30" step="0.5">
+            <div class="value-indicator" id="angleValue">30.0°</div>
+        </div>
+        <div class="control-item">
+            <label>🚀 Kecepatan datang (v₁) <span id="speedDisplay">1.00</span></label>
+            <input type="range" id="speedSlider" min="0.30" max="1.80" value="1.00" step="0.01">
+            <div class="value-indicator" id="speedValue">1.00 c</div>
+        </div>
+        <div class="control-item">
+            <label>🔍 Indeks bias (n₂) <span id="nDisplay">1.50</span></label>
+            <input type="range" id="nSlider" min="1.00" max="2.50" value="1.50" step="0.01">
+            <div class="value-indicator" id="nValue">1.50</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="info-note">⏺️ Medium 1 (udara) · n₁ = 1.00</div>
+        <div class="info-note" id="statusInfo">θ₂ = 19.5°  |  v₂ = 0.67 c</div>
+    </div>
+
+    <!-- Google Form -->
+    <div class="form-section">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd3lvRLJA6KCD5KCpIGi2wJaGXmNZMOLgEzx99b1NbKT68qbg/viewform?usp=header" 
+                title="Google Form Refraksi"
+                loading="lazy">
+        </iframe>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const canvas = document.getElementById('refractionCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elemen kontrol
+        const angleSlider = document.getElementById('angleSlider');
+        const speedSlider = document.getElementById('speedSlider');
+        const nSlider = document.getElementById('nSlider');
+
+        const angleDisplay = document.getElementById('angleDisplay');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const nDisplay = document.getElementById('nDisplay');
+        const angleValue = document.getElementById('angleValue');
+        const speedValue = document.getElementById('speedValue');
+        const nValue = document.getElementById('nValue');
+        const statusInfo = document.getElementById('statusInfo');
+
+        // konstanta
+        const n1 = 1.00;  // udara
+
+        // fungsi draw utama
+        function drawSimulation() {
+            const theta1Deg = parseFloat(angleSlider.value);
+            const v1 = parseFloat(speedSlider.value);
+            const n2 = parseFloat(nSlider.value);
+
+            // update tampilan angka
+            angleDisplay.textContent = `${theta1Deg}°`;
+            speedDisplay.textContent = v1.toFixed(2);
+            nDisplay.textContent = n2.toFixed(2);
+            angleValue.textContent = `${theta1Deg.toFixed(1)}°`;
+            speedValue.textContent = `${v1.toFixed(2)} c`;
+            nValue.textContent = n2.toFixed(2);
+
+            // perhitungan snell: n1 * sin(theta1) = n2 * sin(theta2)
+            const theta1Rad = theta1Deg * Math.PI / 180;
+            const sinTheta1 = Math.sin(theta1Rad);
+            let sinTheta2 = (n1 / n2) * sinTheta1;
+            let theta2Rad = 0;
+            let totalInternalReflection = false;
+
+            if (sinTheta2 > 1) {
+                totalInternalReflection = true;
+                sinTheta2 = 1; 
+                theta2Rad = Math.PI / 2;
+            } else {
+                theta2Rad = Math.asin(sinTheta2);
+            }
+
+            const theta2Deg = theta2Rad * 180 / Math.PI;
+
+            // kecepatan di medium 2: v2 = v1 * (n1/n2)  (karena n = c/v, c konstan)
+            const v2 = v1 * (n1 / n2);
+
+            // update status info
+            if (totalInternalReflection && theta1Deg > 0) {
+                statusInfo.innerHTML = `⚠️ Pemantulan internal total · θ₂ = 90°  |  v₂ = ${v2.toFixed(2)} c`;
+            } else {
+                statusInfo.innerHTML = `θ₂ = ${theta2Deg.toFixed(1)}°  |  v₂ = ${v2.toFixed(2)} c`;
+            }
+
+            // --- GAMBAR ---
+            const w = 800, h = 400;
+            ctx.clearRect(0, 0, w, h);
+
+            // latar gradasi
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, '#d8e8fc');
+            grad.addColorStop(0.48, '#c2d9f0');
+            grad.addColorStop(0.52, '#b3d0ea');
+            grad.addColorStop(1, '#9bbde0');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // garis batas medium (antar muka)
+            const midY = 200;
+            ctx.beginPath();
+            ctx.moveTo(0, midY);
+            ctx.lineTo(w, midY);
+            ctx.strokeStyle = '#1f3d5a';
+            ctx.lineWidth = 3.5;
+            ctx.setLineDash([]);
+            ctx.stroke();
+
+            // label medium
+            ctx.font = '600 16px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#10344e';
+            ctx.fillText('Medium 1  (n₁ = 1.00)', 30, 45);
+            ctx.fillStyle = '#1f4b6e';
+            ctx.fillText(`Medium 2  (n₂ = ${n2.toFixed(2)})`, 30, 370);
+
+            // titik pusat (asal sinar)
+            const cx = 250, cy = midY;
+
+            // --- sinar datang (dari kiri atas) ---
+            const lengthRay = 220;
+            let dx1 = -lengthRay * Math.sin(theta1Rad);
+            let dy1 = -lengthRay * Math.cos(theta1Rad);
+            // jika sudut 0, sinar vertikal ke bawah, tapi kita mau dari atas
+            if (theta1Deg === 0) {
+                dx1 = 0;
+                dy1 = -lengthRay;
+            }
+
+            // gambar sinar datang (warna kuning/oranye)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + dx1, cy + dy1);
+            ctx.strokeStyle = '#f9b81b';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#f9b81b50';
+            ctx.shadowBlur = 14;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // panah kecil di sinar datang
+            const arrowPos = 0.65;
+            const ax = cx + dx1 * arrowPos;
+            const ay = cy + dy1 * arrowPos;
+            const angleArrow = Math.atan2(dy1, dx1);
+            ctx.fillStyle = '#f9b81b';
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(ax - 12 * Math.cos(angleArrow - 0.5), ay - 12 * Math.sin(angleArrow - 0.5));
+            ctx.lineTo(ax - 12 * Math.cos(angleArrow + 0.5), ay - 12 * Math.sin(angleArrow + 0.5));
+            ctx.closePath();
+            ctx.fill();
+
+            // Label θ₁ (sudut datang)
+            ctx.font = '500 16px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#b45f06';
+            ctx.fillText(`θ₁ = ${theta1Deg.toFixed(1)}°`, cx - 80, cy - 30);
+
+            // --- sinar bias (ke kanan bawah) ---
+            let dx2 = lengthRay * Math.sin(theta2Rad);
+            let dy2 = lengthRay * Math.cos(theta2Rad);
+            if (totalInternalReflection && theta1Deg > 0) {
+                // pantulan internal: sinar berjalan sepanjang antarmuka ke kanan
+                dx2 = lengthRay * 1.0;
+                dy2 = 0;
+            } else if (theta1Deg === 0) {
+                dx2 = 0;
+                dy2 = lengthRay;
+            }
+
+            // gambar sinar bias (biru)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + dx2, cy + dy2);
+            ctx.strokeStyle = '#1a8bc0';
+            ctx.lineWidth = 4.5;
+            ctx.shadowColor = '#1a8bc060';
+            ctx.shadowBlur = 16;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // panah bias
+            const arrowPos2 = 0.65;
+            const ax2 = cx + dx2 * arrowPos2;
+            const ay2 = cy + dy2 * arrowPos2;
+            const angleArrow2 = Math.atan2(dy2, dx2);
+            ctx.fillStyle = '#1a8bc0';
+            ctx.beginPath();
+            ctx.moveTo(ax2, ay2);
+            ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 - 0.5), ay2 - 12 * Math.sin(angleArrow2 - 0.5));
+            ctx.lineTo(ax2 - 12 * Math.cos(angleArrow2 + 0.5), ay2 - 12 * Math.sin(angleArrow2 + 0.5));
+            ctx.closePath();
+            ctx.fill();
+
+            // Label θ₂
+            ctx.font = '500 16px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#005a8c';
+            if (totalInternalReflection && theta1Deg > 0) {
+                ctx.fillText('θ₂ = 90° (total internal)', cx + 30, cy + 45);
+            } else {
+                ctx.fillText(`θ₂ = ${theta2Deg.toFixed(1)}°`, cx + 30, cy + 45);
+            }
+
+            // garis normal (putus-putus)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 120);
+            ctx.lineTo(cx, cy + 120);
+            ctx.strokeStyle = '#345e7e';
+            ctx.lineWidth = 1.8;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // titik asal
+            ctx.beginPath();
+            ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#1d3e5e';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#1d3e5e60';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // keterangan tambahan
+            ctx.font = '500 13px "Segoe UI", sans-serif';
+            ctx.fillStyle = '#1a405b';
+            ctx.fillText(`v₁ = ${v1.toFixed(2)} c`, 580, 70);
+            ctx.fillText(`v₂ = ${v2.toFixed(2)} c`, 580, 100);
+            ctx.fillStyle = '#1e4e6e';
+            ctx.fillText('n₁·sin θ₁ = n₂·sin θ₂', 580, 140);
+        }
+
+        // event listener
+        function handleChange() {
+            drawSimulation();
+        }
+
+        angleSlider.addEventListener('input', handleChange);
+        speedSlider.addEventListener('input', handleChange);
+        nSlider.addEventListener('input', handleChange);
+
+        // juga drag di canvas untuk mengubah sudut (interaksi)
+        let isDragging = false;
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleX; // pakai scaleX karena aspect ratio
+
+            // hanya jika dekat dengan titik pusat (radius 50px)
+            const cx = 250, cy = 200; // titik pusat di canvas
+            const dx = mouseX - cx;
+            const dy = mouseY - cy;
+            if (Math.sqrt(dx*dx + dy*dy) < 60) {
+                isDragging = true;
+                canvas.style.cursor = 'grabbing';
+                updateAngleFromMouse(e);
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                updateAngleFromMouse(e);
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                canvas.style.cursor = 'grab';
+            }
+        });
+
+        function updateAngleFromMouse(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleX;
+
+            const cx = 250, cy = 200;
+            const dx = mouseX - cx;
+            const dy = mouseY - cy;
+
+            // sudut terhadap garis vertikal (normal) di kuadran atas
+            // kita hanya ambil jika di atas garis batas (dy < 0) dan di kiri (dx < 0) 
+            if (dy < 0 && dx < 0) {
+                let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
+                let angleDeg = angleRad * 180 / Math.PI;
+                if (angleDeg > 85) angleDeg = 85;
+                if (angleDeg < 0) angleDeg = 0;
+                angleSlider.value = angleDeg;
+                drawSimulation();
+            }
+        }
+
+        // sentuh untuk mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (touch.clientX - rect.left) * scaleX;
+            const mouseY = (touch.clientY - rect.top) * scaleX;
+            const cx = 250, cy = 200;
+            const dx = mouseX - cx;
+            const dy = mouseY - cy;
+            if (Math.sqrt(dx*dx + dy*dy) < 80) {
+                isDragging = true;
+                updateAngleFromTouch(touch);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging && e.touches.length > 0) {
+                updateAngleFromTouch(e.touches[0]);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        function updateAngleFromTouch(touch) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const mouseX = (touch.clientX - rect.left) * scaleX;
+            const mouseY = (touch.clientY - rect.top) * scaleX;
+            const cx = 250, cy = 200;
+            const dx = mouseX - cx;
+            const dy = mouseY - cy;
+            if (dy < 0 && dx < 0) {
+                let angleRad = Math.atan2(Math.abs(dx), Math.abs(dy));
+                let angleDeg = angleRad * 180 / Math.PI;
+                if (angleDeg > 85) angleDeg = 85;
+                if (angleDeg < 0) angleDeg = 0;
+                angleSlider.value = angleDeg;
+                drawSimulation();
+            }
+        }
+
+        // inisialisasi
+        drawSimulation();
+        canvas.style.cursor = 'grab';
+    })();
+</script>
+
+</body>
+</html>
