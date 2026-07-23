@@ -164,16 +164,69 @@
             aspect-ratio: 16 / 9;
             width: 100%;
             position: relative;
+            min-height: 200px;
         }
 
-        .video-wrapper video,
         .video-wrapper iframe {
             width: 100%;
             height: 100%;
             display: block;
             border: none;
-            object-fit: cover;
-            background: #2c1f19;
+            background: #1a1a1a;
+        }
+
+        /* Fallback jika iframe tidak bisa dimuat */
+        .video-fallback {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2c1f19 0%, #1a1a1a 100%);
+            color: #f5ede7;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .video-fallback i {
+            font-size: 3.5rem;
+            color: #b48d7a;
+            margin-bottom: 1rem;
+        }
+
+        .video-fallback h3 {
+            font-weight: 400;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-fallback p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            max-width: 80%;
+        }
+
+        /* Tombol muat ulang video */
+        .reload-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .reload-btn:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         .value-grid {
@@ -298,7 +351,7 @@
             position: absolute;
             bottom: 10px;
             right: 12px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             color: #fff;
             padding: 0.2rem 0.8rem;
             border-radius: 20px;
@@ -306,7 +359,8 @@
             font-family: 'Inter', sans-serif;
             backdrop-filter: blur(4px);
             pointer-events: none;
-            opacity: 0.7;
+            opacity: 0.8;
+            z-index: 10;
         }
     </style>
 </head>
@@ -349,23 +403,34 @@
                 </p>
             </div>
 
-            <!-- Video dari http://10.101.209.95 -->
+            <!-- Video dari http://10.101.209.95 menggunakan IFRAME -->
             <div class="video-wrapper" id="videoWrapper">
-                <!-- 
-                    Menggunakan tag video dengan sumber dari HTTP.
-                    Browser akan menampilkan peringatan mixed content,
-                    tetapi video akan tetap dimuat dan diputar.
-                -->
-                <video id="mainVideo" controls autoplay muted playsinline>
-                    <source src="http://10.101.209.95/" type="video/mp4">
-                    <!-- Fallback jika video tidak dapat dimuat -->
-                    <p>Video tidak dapat dimuat. Pastikan alamat <strong>http://10.101.209.95</strong> dapat diakses.</p>
-                </video>
+                <!-- Menggunakan iframe untuk memuat video dari HTTP -->
+                <iframe 
+                    id="mainVideo"
+                    src="http://10.101.209.95/" 
+                    allowfullscreen
+                    allow="autoplay; encrypted-media"
+                    loading="lazy">
+                </iframe>
                 
-                <!-- Indikator status (opsional) -->
+                <!-- Indikator status -->
                 <div class="video-status" id="videoStatus">
-                    <i class="fas fa-circle" style="color: #4caf50; font-size: 0.5rem;"></i> 
-                    <span id="statusText">Memuat...</span>
+                    <i class="fas fa-circle" style="color: #ff9800; font-size: 0.5rem;"></i> 
+                    <span id="statusText">Memuat video...</span>
+                </div>
+
+                <!-- Fallback jika iframe tidak bisa dimuat -->
+                <div class="video-fallback" id="videoFallback">
+                    <i class="fas fa-video-slash"></i>
+                    <h3>Video tidak dapat dimuat</h3>
+                    <p>Konten dari <strong>http://10.101.209.95</strong> tidak dapat diakses.</p>
+                    <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 0.3rem;">
+                        <i class="fas fa-info-circle"></i> Periksa koneksi atau buka alamat secara langsung.
+                    </p>
+                    <button class="reload-btn" onclick="reloadVideo()">
+                        <i class="fas fa-redo"></i> Muat Ulang Video
+                    </button>
                 </div>
             </div>
         </div>
@@ -415,44 +480,78 @@
     </div>
 
     <script>
-        // Memantau status video tanpa menghalangi pemuatan
+        // Fungsi untuk memuat ulang video (iframe)
+        function reloadVideo() {
+            const iframe = document.getElementById('mainVideo');
+            const fallback = document.getElementById('videoFallback');
+            const statusText = document.getElementById('statusText');
+            
+            // Sembunyikan fallback, tampilkan iframe
+            fallback.style.display = 'none';
+            iframe.style.display = 'block';
+            
+            // Reload iframe dengan mengubah src
+            const currentSrc = iframe.src;
+            iframe.src = '';
+            setTimeout(() => {
+                iframe.src = currentSrc;
+                statusText.textContent = 'Memuat ulang...';
+                document.querySelector('#videoStatus i').style.color = '#ff9800';
+            }, 100);
+        }
+
+        // Mendeteksi apakah iframe berhasil dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('mainVideo');
+            const iframe = document.getElementById('mainVideo');
+            const fallback = document.getElementById('videoFallback');
             const statusText = document.getElementById('statusText');
             const statusIcon = document.querySelector('#videoStatus i');
-            
-            // Update status saat video dimuat
-            video.addEventListener('loadstart', function() {
-                statusText.textContent = 'Memuat...';
-                statusIcon.style.color = '#ff9800';
-            });
-            
-            video.addEventListener('canplay', function() {
-                statusText.textContent = 'Siap diputar';
-                statusIcon.style.color = '#4caf50';
-            });
-            
-            video.addEventListener('playing', function() {
-                statusText.textContent = 'Diputar';
-                statusIcon.style.color = '#4caf50';
-            });
-            
-            video.addEventListener('error', function(e) {
-                statusText.textContent = 'Gagal memuat (mixed content)';
-                statusIcon.style.color = '#f44336';
-                console.warn('Video error:', e);
-                console.warn('URL: http://10.101.209.95/');
-                console.warn('Catatan: Ini adalah mixed content yang diizinkan.');
-            });
-            
-            // Jika video gagal sama sekali karena mixed content,
-            // kita tetap menampilkan pesan tapi tidak menghilangkan video
-            setTimeout(function() {
-                if (video.readyState === 0) {
-                    statusText.textContent = 'Menunggu (mixed content)';
-                    statusIcon.style.color = '#ff9800';
+
+            // Coba deteksi jika iframe gagal dimuat
+            // Karena tidak ada event error untuk iframe, kita gunakan timeout
+            let loadTimeout = setTimeout(function() {
+                // Jika fallback tidak aktif dan video belum terlihat
+                if (fallback.style.display !== 'flex') {
+                    // Tampilkan fallback setelah timeout
+                    fallback.style.display = 'flex';
+                    iframe.style.display = 'none';
+                    statusText.textContent = 'Gagal memuat (timeout)';
+                    statusIcon.style.color = '#f44336';
+                    console.warn('Iframe timeout: http://10.101.209.95/ tidak merespons');
                 }
-            }, 3000);
+            }, 8000); // 8 detik timeout
+
+            // Jika iframe berhasil dimuat, batalkan timeout
+            // Kita tidak bisa mendeteksi secara langsung, tapi kita bisa 
+            // mencoba dengan event load (tidak selalu bekerja untuk iframe)
+            iframe.addEventListener('load', function() {
+                clearTimeout(loadTimeout);
+                statusText.textContent = 'Video dimuat';
+                statusIcon.style.color = '#4caf50';
+                fallback.style.display = 'none';
+                iframe.style.display = 'block';
+                console.log('Iframe berhasil dimuat');
+            });
+
+            // Event error untuk iframe (tidak selalu didukung)
+            iframe.addEventListener('error', function() {
+                clearTimeout(loadTimeout);
+                fallback.style.display = 'flex';
+                iframe.style.display = 'none';
+                statusText.textContent = 'Gagal memuat';
+                statusIcon.style.color = '#f44336';
+                console.warn('Iframe error: http://10.101.209.95/');
+            });
+
+            // Update status awal
+            statusText.textContent = 'Memuat video...';
+            statusIcon.style.color = '#ff9800';
+
+            // Jika pengguna mengklik fallback, reload video
+            document.querySelector('.reload-btn')?.addEventListener('click', reloadVideo);
+
+            console.log('Video dari http://10.101.209.95/ akan dimuat di iframe');
+            console.log('Catatan: Mixed content diizinkan untuk ditampilkan.');
         });
     </script>
 </body>
