@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FaceMesh · Deteksi Wajah Real-time</title>
+    <title>FaceMesh · Toshiba Satellite L510</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         * {
@@ -27,17 +27,18 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 2.5rem;
             padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
         }
 
+        /* Header dengan Brand Toshiba */
         .header {
             display: flex;
             justify-content: space-between;
@@ -47,30 +48,55 @@
             gap: 0.8rem;
         }
 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toshiba-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem 1rem 0.3rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .toshiba-brand i {
+            color: #e31b23;
+            font-size: 1.4rem;
+        }
+
         .header h1 {
             color: #fff;
             font-weight: 600;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
         }
 
         .header h1 i {
             color: #6c8cff;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
 
         .header .status {
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 0.4rem 1.2rem;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem 1.2rem;
             border-radius: 40px;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .header .status .dot {
@@ -87,6 +113,10 @@
 
         .header .status .dot.inactive {
             background: #f44336;
+        }
+
+        .header .status .dot.loading {
+            background: #ff9800;
         }
 
         @keyframes pulse {
@@ -132,6 +162,59 @@
             transform: scaleX(-1);
         }
 
+        /* Device info overlay */
+        .device-info {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .device-info i {
+            color: #6c8cff;
+            font-size: 0.8rem;
+        }
+
+        .device-info strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* FPS counter di video */
+        .fps-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .fps-overlay span {
+            color: #6c8cff;
+            font-weight: 600;
+        }
+
         /* Controls */
         .controls {
             display: flex;
@@ -166,13 +249,13 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             color: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
             transform: translateY(-1px);
         }
 
@@ -216,13 +299,13 @@
         /* Stats */
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 0.8rem;
             margin-top: 1.2rem;
         }
 
         .stat-item {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 1.2rem;
             padding: 0.6rem 1rem;
             text-align: center;
@@ -230,14 +313,14 @@
         }
 
         .stat-item .label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.35);
         }
 
         .stat-item .value {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #fff;
             margin-top: 0.1rem;
@@ -255,7 +338,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.9);
+            background: rgba(10, 10, 10, 0.92);
             color: #fff;
             flex-direction: column;
             align-items: center;
@@ -264,13 +347,14 @@
             padding: 2rem;
             border-radius: 1.8rem;
             z-index: 10;
+            backdrop-filter: blur(8px);
         }
 
         .fallback i {
             font-size: 4rem;
             color: #6c8cff;
             margin-bottom: 1rem;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .fallback h3 {
@@ -281,18 +365,25 @@
 
         .fallback p {
             font-size: 0.9rem;
-            opacity: 0.6;
+            opacity: 0.5;
             max-width: 80%;
         }
 
         /* Responsive */
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .container {
                 padding: 1rem;
                 border-radius: 1.5rem;
             }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
             .header h1 {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+            }
+            .toshiba-brand {
+                font-size: 0.9rem;
             }
             .controls {
                 flex-direction: column;
@@ -303,11 +394,15 @@
                 justify-content: center;
             }
             .btn {
-                padding: 0.4rem 1rem;
-                font-size: 0.8rem;
+                padding: 0.4rem 0.9rem;
+                font-size: 0.75rem;
             }
             .stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .device-info {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.7rem;
             }
         }
     </style>
@@ -317,12 +412,18 @@
     <div class="container">
         <!-- HEADER -->
         <div class="header">
-            <h1>
-                <i class="fas fa-face-smile"></i>
-                FaceMesh
-            </h1>
+            <div class="header-left">
+                <div class="toshiba-brand">
+                    <i class="fas fa-laptop"></i>
+                    TOSHIBA
+                </div>
+                <h1>
+                    <i class="fas fa-face-smile"></i>
+                    FaceMesh
+                </h1>
+            </div>
             <div class="status">
-                <span class="dot active" id="statusDot"></span>
+                <span class="dot loading" id="statusDot"></span>
                 <span id="statusText">Memulai...</span>
             </div>
         </div>
@@ -332,11 +433,25 @@
             <video id="webcam" autoplay playsinline></video>
             <canvas id="overlay"></canvas>
 
+            <!-- Device Info -->
+            <div class="device-info">
+                <i class="fas fa-microchip"></i>
+                <strong>Toshiba Satellite L510</strong>
+                <span style="opacity:0.5;">|</span>
+                <i class="fas fa-camera"></i>
+                <span>Webcam</span>
+            </div>
+
+            <!-- FPS -->
+            <div class="fps-overlay">
+                <i class="fas fa-chart-line"></i> <span id="fpsOverlay">0</span> FPS
+            </div>
+
             <!-- Fallback -->
             <div class="fallback" id="fallback">
                 <i class="fas fa-video-slash"></i>
                 <h3>Webcam tidak tersedia</h3>
-                <p id="fallbackText">Pastikan Anda telah mengizinkan akses kamera.</p>
+                <p id="fallbackText">Pastikan webcam laptop Toshiba Satellite L510 terhubung dan izinkan akses kamera.</p>
             </div>
         </div>
 
@@ -374,20 +489,23 @@
                 <div class="value"><span class="highlight" id="keypointCount">0</span> / 468</div>
             </div>
             <div class="stat-item">
-                <div class="label">FPS</div>
-                <div class="value"><span class="highlight" id="fpsCounter">0</span> fps</div>
+                <div class="label">Resolusi</div>
+                <div class="value" id="resolution" style="font-size:0.85rem;">-</div>
             </div>
             <div class="stat-item">
-                <div class="label">Status</div>
-                <div class="value" id="detectionStatus" style="font-size:0.9rem; color:#4caf50;">● Aktif</div>
+                <div class="label">Status Deteksi</div>
+                <div class="value" id="detectionStatus" style="font-size:0.85rem; color:#ff9800;">● Menunggu</div>
             </div>
         </div>
     </div>
 
     <!-- ===== MEDIAPIPE FACE MESH ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous">
+    </script>
 
     <script>
         (function() {
@@ -403,8 +521,9 @@
             const statusText = document.getElementById('statusText');
             const faceCountEl = document.getElementById('faceCount');
             const keypointCountEl = document.getElementById('keypointCount');
-            const fpsCounterEl = document.getElementById('fpsCounter');
+            const fpsOverlayEl = document.getElementById('fpsOverlay');
             const detectionStatusEl = document.getElementById('detectionStatus');
+            const resolutionEl = document.getElementById('resolution');
 
             const startBtn = document.getElementById('startBtn');
             const stopBtn = document.getElementById('stopBtn');
@@ -431,9 +550,9 @@
             window.addEventListener('resize', resizeCanvas);
 
             // ===== UPDATE STATUS =====
-            function setStatus(text, isActive = true) {
+            function setStatus(text, state = 'active') {
                 statusText.textContent = text;
-                statusDot.className = 'dot ' + (isActive ? 'active' : 'inactive');
+                statusDot.className = 'dot ' + state;
             }
 
             // ===== FACE MESH CALLBACK =====
@@ -450,9 +569,13 @@
                     detectionStatusEl.style.color = '#4caf50';
                     keypointCountEl.textContent = results.multiFaceLandmarks[0].length || 0;
 
+                    // Update resolusi dari video
+                    if (video.videoWidth) {
+                        resolutionEl.textContent = video.videoWidth + '×' + video.videoHeight;
+                    }
+
                     // Draw mesh jika aktif
                     if (showMesh) {
-                        // TESSELASI (segitiga) - lebih detail
                         for (const landmarks of results.multiFaceLandmarks) {
                             // Gambar titik-titik
                             for (const landmark of landmarks) {
@@ -465,8 +588,7 @@
                                 ctx.fill();
                             }
 
-                            // Gambar koneksi (tesselasi) menggunakan drawing_utils
-                            // Tapi kita gambar manual untuk kontrol lebih baik
+                            // Gambar koneksi
                             drawConnections(landmarks);
                         }
                     }
@@ -480,16 +602,15 @@
                 frameCount++;
                 const now = performance.now();
                 if (now - lastFpsUpdate > 1000) {
-                    fpsCounterEl.textContent = frameCount;
+                    fpsOverlayEl.textContent = frameCount;
                     frameCount = 0;
                     lastFpsUpdate = now;
                 }
             }
 
-            // ===== GAMBAR KONEKSI FACE MESH (Manual) =====
+            // ===== GAMBAR KONEKSI FACE MESH =====
             function drawConnections(landmarks) {
-                // Daftar koneksi untuk FaceMesh (468 titik)
-                // Hanya sebagian untuk performa, atau bisa menggunakan semua
+                // Koneksi utama FaceMesh (subset untuk performa)
                 const connections = [
                     [0, 1],
                     [1, 2],
@@ -960,7 +1081,7 @@
                     [466, 467]
                 ];
 
-                ctx.strokeStyle = 'rgba(108, 140, 255, 0.3)';
+                ctx.strokeStyle = 'rgba(108, 140, 255, 0.25)';
                 ctx.lineWidth = 0.8;
 
                 for (const [i, j] of connections) {
@@ -979,118 +1100,10 @@
                     }
                 }
 
-                // Gambar titik dengan warna berbeda untuk area wajah
+                // Gambar titik dengan warna berbeda
                 for (let i = 0; i < landmarks.length; i++) {
                     const p = landmarks[i];
                     const x = p.x * canvas.width;
                     const y = p.y * canvas.height;
 
-                    // Warna berdasarkan posisi
-                    let color = 'rgba(108, 140, 255, 0.6)';
-                    if (i >= 1 && i <= 17) color = 'rgba(255, 200, 100, 0.8)'; // Alis
-                    if (i >= 33 && i <= 133) color = 'rgba(100, 255, 200, 0.8)'; // Mulut
-                    if (i >= 362 && i <= 397) color = 'rgba(255, 100, 200, 0.8)'; // Mata kanan
-                    if (i >= 263 && i <= 298) color = 'rgba(100, 200, 255, 0.8)'; // Mata kiri
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, 1.2, 0, 2 * Math.PI);
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                }
-            }
-
-            // ===== INISIALISASI FACE MESH =====
-            function initFaceMesh() {
-                faceMesh = new FaceMesh({
-                    locateFile: (file) => {
-                        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-                    }
-                });
-
-                faceMesh.setOptions({
-                    maxNumFaces: 4,
-                    refineLandmarks: true,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
-                });
-
-                faceMesh.onResults(onResults);
-            }
-
-            // ===== MULAI KAMERA =====
-            async function startCamera() {
-                try {
-                    setStatus('Mengakses kamera...', true);
-                    fallback.style.display = 'none';
-
-                    // Inisialisasi FaceMesh jika belum
-                    if (!faceMesh) {
-                        initFaceMesh();
-                    }
-
-                    // Mulai camera
-                    camera = new Camera(video, {
-                        onFrame: async () => {
-                            if (isRunning && faceMesh) {
-                                await faceMesh.send({ image: video });
-                            }
-                        },
-                        width: 640,
-                        height: 480
-                    });
-
-                    await camera.start();
-                    isRunning = true;
-
-                    setStatus('FaceMesh aktif ✅', true);
-                    detectionStatusEl.textContent = '● Menunggu wajah';
-                    detectionStatusEl.style.color = '#ff9800';
-
-                    resizeCanvas();
-
-                } catch (err) {
-                    console.error('Error:', err);
-                    setStatus('Gagal ❌', false);
-                    fallback.style.display = 'flex';
-                    fallbackText.textContent = err.message || 'Gagal mengakses webcam.';
-                    isRunning = false;
-                }
-            }
-
-            // ===== HENTIKAN =====
-            function stopCamera() {
-                if (camera) {
-                    camera.stop();
-                    camera = null;
-                }
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(t => t.stop());
-                    video.srcObject = null;
-                }
-                isRunning = false;
-                setStatus('Dihentikan', false);
-                detectionStatusEl.textContent = '● Tidak aktif';
-                detectionStatusEl.style.color = '#f44336';
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                faceCountEl.textContent = '0';
-                keypointCountEl.textContent = '0';
-                fpsCounterEl.textContent = '0';
-            }
-
-            // ===== SNAPSHOT =====
-            function takeSnapshot() {
-                if (!isRunning) {
-                    alert('Webcam belum aktif. Mulai streaming terlebih dahulu.');
-                    return;
-                }
-
-                const tempCanvas = document.createElement('canvas');
-                const rect = video.getBoundingClientRect();
-                tempCanvas.width = video.videoWidth || 640;
-                tempCanvas.height = video.videoHeight || 480;
-                const tempCtx = tempCanvas.getContext('2d');
-
-                // Gambar video (mirror)
-                tempCtx.translate(tempCanvas.width, 0);
-                tempCtx.scale(-1, 1);
-                tempCtx.drawImage(video, 
+                    let color = 'rgba
