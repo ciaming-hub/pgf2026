@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Visual Beta Partikel · 3D</title>
+    <title>Natrium Klorida (NaCl) · Visual 3D</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
         body {
             overflow: hidden;
-            background: #080818;
+            background: #0a0a1a;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
         canvas {
@@ -30,9 +30,9 @@
             -webkit-backdrop-filter: blur(14px);
             padding: 14px 32px;
             border-radius: 60px;
-            border: 1px solid rgba(100, 180, 255, 0.3);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(100, 180, 255, 0.25);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 15px;
             letter-spacing: 0.4px;
             display: flex;
@@ -43,17 +43,17 @@
             white-space: nowrap;
         }
         #ui .badge {
-            background: rgba(70, 160, 255, 0.2);
+            background: rgba(70, 160, 255, 0.15);
             padding: 4px 16px;
             border-radius: 30px;
             font-size: 14px;
             color: #7fcbff;
-            border: 1px solid rgba(70, 160, 255, 0.15);
+            border: 1px solid rgba(70, 160, 255, 0.12);
         }
         #ui .count {
             font-weight: 700;
             color: #b3e0ff;
-            min-width: 48px;
+            min-width: 32px;
             display: inline-block;
             text-align: center;
             font-size: 17px;
@@ -73,10 +73,49 @@
             letter-spacing: 1px;
             z-index: 10;
             pointer-events: none;
+            text-align: center;
         }
         #title strong {
             color: rgba(130, 210, 255, 0.9);
             font-weight: 500;
+        }
+        #legend {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(8, 12, 30, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 16px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 70px;
+            align-items: center;
+        }
+        #legend .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        #legend .dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+        }
+        #legend .label {
+            font-size: 11px;
+            opacity: 0.7;
+            letter-spacing: 0.3px;
         }
         @media (max-width: 640px) {
             #ui {
@@ -95,24 +134,47 @@
             }
             #ui .count {
                 font-size: 15px;
-                min-width: 36px;
+                min-width: 30px;
             }
             #title {
                 font-size: 12px;
                 padding: 6px 16px;
                 top: 14px;
+                max-width: 90vw;
+            }
+            #legend {
+                right: 12px;
+                padding: 12px 10px;
+                min-width: 56px;
+            }
+            #legend .dot {
+                width: 18px;
+                height: 18px;
+            }
+            #legend .label {
+                font-size: 10px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="title">⚛ <strong>Beta</strong> · partikel berenergi tinggi</div>
+    <div id="title">🧂 <strong>Natrium Klorida</strong> · struktur kristal kubus · NaCl</div>
     <div id="ui">
-        <span>⚡ <span class="badge">β</span></span>
-        <span>aktif · <span class="count" id="particleCount">0</span></span>
+        <span>⚛ <span class="badge">NaCl</span></span>
+        <span>atom · <span class="count" id="atomCount">0</span></span>
         <span style="opacity:0.4;">|</span>
         <span style="opacity:0.6; font-size:13px;">geser rotasi · gulir zoom</span>
+    </div>
+    <div id="legend">
+        <div class="item">
+            <div class="dot" style="background: radial-gradient(circle at 30% 30%, #ffcc66, #cc8800);"></div>
+            <span class="label">Na⁺</span>
+        </div>
+        <div class="item">
+            <div class="dot" style="background: radial-gradient(circle at 30% 30%, #66ccff, #0066cc);"></div>
+            <span class="label">Cl⁻</span>
+        </div>
     </div>
 
     <script type="importmap">
@@ -143,12 +205,12 @@
         const scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color4(0.02, 0.02, 0.07, 1);
 
-        // --- kamera arc rotate (diperbesar) ---
+        // --- kamera arc rotate ---
         const camera = new BABYLON.ArcRotateCamera(
             'camera',
-            -Math.PI / 3.5,
+            -Math.PI / 4,
             Math.PI / 3.2,
-            5.5, // jarak lebih jauh agar objek besar terlihat utuh
+            5.5,
             BABYLON.Vector3.Zero(),
             scene
         );
@@ -156,29 +218,32 @@
         camera.minZ = 0.5;
         camera.maxZ = 30;
         camera.wheelPrecision = 40;
-        camera.lowerRadiusLimit = 2.5;
+        camera.lowerRadiusLimit = 2.8;
         camera.upperRadiusLimit = 14;
-        camera.target = new BABYLON.Vector3(0, 0.3, 0);
+        camera.target = new BABYLON.Vector3(0, 0, 0);
 
-        // --- pencahayaan (lebih terang) ---
+        // --- pencahayaan ---
         const ambientLight = new BABYLON.HemisphericLight('ambient', new BABYLON.Vector3(0, 1, 0), scene);
-        ambientLight.intensity = 0.8;
+        ambientLight.intensity = 0.7;
         ambientLight.diffuse = new BABYLON.Color3(0.4, 0.6, 0.9);
 
-        const dirLight = new BABYLON.DirectionalLight('dir', new BABYLON.Vector3(-1.5, 3, -1), scene);
-        dirLight.intensity = 1.2;
-        dirLight.diffuse = new BABYLON.Color3(0.8, 0.95, 1);
+        const dirLight = new BABYLON.DirectionalLight('dir', new BABYLON.Vector3(-1.5, 3, -1.5), scene);
+        dirLight.intensity = 1.4;
+        dirLight.diffuse = new BABYLON.Color3(0.9, 0.95, 1);
 
-        const backLight = new BABYLON.DirectionalLight('back', new BABYLON.Vector3(0.8, 0.3, 1.5), scene);
-        backLight.intensity = 0.7;
-        backLight.diffuse = new BABYLON.Color3(0.4, 0.7, 1);
+        const backLight = new BABYLON.DirectionalLight('back', new BABYLON.Vector3(1, 0.5, 1.5), scene);
+        backLight.intensity = 0.6;
+        backLight.diffuse = new BABYLON.Color3(0.3, 0.6, 1);
 
-        // --- latar bintang (lebih banyak & terang) ---
+        const fillLight = new BABYLON.DirectionalLight('fill', new BABYLON.Vector3(0, -1, 0), scene);
+        fillLight.intensity = 0.3;
+
+        // --- latar bintang ---
         const starPositions = [];
-        for (let i = 0; i < 600; i++) {
+        for (let i = 0; i < 500; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const r = 6 + Math.random() * 12;
+            const r = 6 + Math.random() * 14;
             starPositions.push(
                 Math.sin(phi) * Math.cos(theta) * r,
                 Math.sin(phi) * Math.sin(theta) * r * 0.4,
@@ -186,168 +251,141 @@
             );
         }
         const starInstance = BABYLON.MeshBuilder.CreatePoints('starsPoints', { points: starPositions }, scene);
-        starInstance.color = new BABYLON.Color4(0.5, 0.8, 1, 0.7);
-        starInstance.size = 0.025;
+        starInstance.color = new BABYLON.Color4(0.5, 0.8, 1, 0.6);
+        starInstance.size = 0.02;
 
-        // --- ANCHOR (pusat) dengan skala lebih besar ---
-        const anchor = new BABYLON.TransformNode('anchor', scene);
-        anchor.position.y = 0.25;
-        anchor.scaling.set(1.6, 1.6, 1.6); // perbesar seluruh sistem
+        // --- fungsi membuat atom dengan material glossy ---
+        function createAtom(position, color, size, emissiveColor = null) {
+            const sphere = BABYLON.MeshBuilder.CreateSphere('atom', { diameter: size }, scene);
+            sphere.position.copyFrom(position);
 
-        // --- CORE GLOW (bola pusat besar) ---
-        const coreGlow = BABYLON.MeshBuilder.CreateSphere('core', { diameter: 0.35 }, scene);
-        const coreMat = new BABYLON.StandardMaterial('coreMat', scene);
-        coreMat.emissiveColor = new BABYLON.Color3(0.3, 0.7, 1);
-        coreMat.diffuseColor = new BABYLON.Color3(0.15, 0.4, 0.9);
-        coreMat.alpha = 0.8;
-        coreGlow.material = coreMat;
-        coreGlow.parent = anchor;
-
-        // --- AURA RING (cincin lebih besar) ---
-        const ring1 = BABYLON.MeshBuilder.CreateTorus('ring1', { diameter: 1.2, thickness: 0.035 }, scene);
-        const ringMat1 = new BABYLON.StandardMaterial('ringMat1', scene);
-        ringMat1.emissiveColor = new BABYLON.Color3(0.4, 0.8, 1);
-        ringMat1.alpha = 0.2;
-        ring1.material = ringMat1;
-        ring1.rotation.x = Math.PI / 2;
-        ring1.parent = anchor;
-
-        const ring2 = BABYLON.MeshBuilder.CreateTorus('ring2', { diameter: 1.6, thickness: 0.025 }, scene);
-        const ringMat2 = new BABYLON.StandardMaterial('ringMat2', scene);
-        ringMat2.emissiveColor = new BABYLON.Color3(0.2, 0.5, 0.95);
-        ringMat2.alpha = 0.15;
-        ring2.material = ringMat2;
-        ring2.rotation.z = Math.PI / 3.5;
-        ring2.rotation.x = Math.PI / 4;
-        ring2.parent = anchor;
-
-        const ring3 = BABYLON.MeshBuilder.CreateTorus('ring3', { diameter: 2.0, thickness: 0.02 }, scene);
-        const ringMat3 = new BABYLON.StandardMaterial('ringMat3', scene);
-        ringMat3.emissiveColor = new BABYLON.Color3(0.1, 0.4, 0.9);
-        ringMat3.alpha = 0.1;
-        ring3.material = ringMat3;
-        ring3.rotation.y = Math.PI / 5;
-        ring3.rotation.x = Math.PI / 3;
-        ring3.parent = anchor;
-
-        // --- PARTIKEL BETA UTAMA (diperbesar & diperbanyak) ---
-        const particleSystem = new BABYLON.ParticleSystem('betaParticles', 1200, scene);
-
-        // tekstur glow (lebih besar)
-        const createGlowTexture = () => {
-            const size = 128;
-            const c = document.createElement('canvas');
-            c.width = size;
-            c.height = size;
-            const ctx = c.getContext('2d');
-            const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-            grad.addColorStop(0, 'rgba(255,255,255,1)');
-            grad.addColorStop(0.15, 'rgba(220,240,255,1)');
-            grad.addColorStop(0.5, 'rgba(120,190,255,0.8)');
-            grad.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, size, size);
-            return new BABYLON.Texture(c, scene);
-        };
-        particleSystem.particleTexture = createGlowTexture();
-
-        particleSystem.emitter = anchor;
-
-        // area emisi diperluas
-        particleSystem.minEmitBox = new BABYLON.Vector3(-0.6, -0.2, -0.6);
-        particleSystem.maxEmitBox = new BABYLON.Vector3(0.6, 0.4, 0.6);
-
-        // warna: biru cerah
-        particleSystem.color1 = new BABYLON.Color4(0.5, 0.85, 1.0, 1.0);
-        particleSystem.color2 = new BABYLON.Color4(0.2, 0.5, 1.0, 0.9);
-        particleSystem.colorDead = new BABYLON.Color4(0.05, 0.1, 0.4, 0.0);
-
-        // ukuran partikel lebih besar
-        particleSystem.minSize = 0.06;
-        particleSystem.maxSize = 0.25;
-        particleSystem.minLifeTime = 0.5;
-        particleSystem.maxLifeTime = 1.8;
-
-        // kecepatan lebih tinggi
-        particleSystem.direction1 = new BABYLON.Vector3(-1.8, -0.5, -1.8);
-        particleSystem.direction2 = new BABYLON.Vector3(1.8, 1.2, 1.8);
-        particleSystem.minEmitPower = 0.8;
-        particleSystem.maxEmitPower = 2.8;
-
-        particleSystem.gravity = new BABYLON.Vector3(0, -0.12, 0);
-        particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD;
-        particleSystem.emitRate = 350;
-        particleSystem.start();
-
-        // --- PARTIKEL JEJAK (lebih banyak & besar) ---
-        const trailSystem = new BABYLON.ParticleSystem('trailParticles', 500, scene);
-        trailSystem.particleTexture = createGlowTexture();
-        trailSystem.emitter = anchor;
-        trailSystem.minEmitBox = new BABYLON.Vector3(-0.4, -0.1, -0.4);
-        trailSystem.maxEmitBox = new BABYLON.Vector3(0.4, 0.2, 0.4);
-        trailSystem.color1 = new BABYLON.Color4(0.8, 0.9, 1.0, 0.7);
-        trailSystem.color2 = new BABYLON.Color4(0.3, 0.6, 1.0, 0.4);
-        trailSystem.colorDead = new BABYLON.Color4(0.0, 0.1, 0.3, 0.0);
-        trailSystem.minSize = 0.03;
-        trailSystem.maxSize = 0.12;
-        trailSystem.minLifeTime = 0.3;
-        trailSystem.maxLifeTime = 1.0;
-        trailSystem.direction1 = new BABYLON.Vector3(-2.8, -0.8, -2.8);
-        trailSystem.direction2 = new BABYLON.Vector3(2.8, 1.6, 2.8);
-        trailSystem.minEmitPower = 1.5;
-        trailSystem.maxEmitPower = 3.8;
-        trailSystem.gravity = new BABYLON.Vector3(0, -0.04, 0);
-        trailSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD;
-        trailSystem.emitRate = 160;
-        trailSystem.start();
-
-        // --- PARTIKEL SINAR (lebih tebal & panjang) ---
-        const raySystem = new BABYLON.ParticleSystem('rayParticles', 150, scene);
-        raySystem.particleTexture = createGlowTexture();
-        raySystem.emitter = anchor;
-        raySystem.minEmitBox = new BABYLON.Vector3(-0.08, -0.03, -0.08);
-        raySystem.maxEmitBox = new BABYLON.Vector3(0.08, 0.03, 0.08);
-        raySystem.color1 = new BABYLON.Color4(0.9, 0.95, 1.0, 0.9);
-        raySystem.color2 = new BABYLON.Color4(0.5, 0.8, 1.0, 0.5);
-        raySystem.colorDead = new BABYLON.Color4(0.0, 0.0, 0.2, 0.0);
-        raySystem.minSize = 0.015;
-        raySystem.maxSize = 0.06;
-        raySystem.minLifeTime = 0.15;
-        raySystem.maxLifeTime = 0.7;
-        raySystem.direction1 = new BABYLON.Vector3(-4.0, -1.5, -4.0);
-        raySystem.direction2 = new BABYLON.Vector3(4.0, 2.5, 4.0);
-        raySystem.minEmitPower = 3.0;
-        raySystem.maxEmitPower = 5.5;
-        raySystem.gravity = new BABYLON.Vector3(0, -0.02, 0);
-        raySystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD;
-        raySystem.emitRate = 70;
-        raySystem.start();
-
-        // --- update counter partikel ---
-        const countEl = document.getElementById('particleCount');
-        let totalActive = 0;
-        setInterval(() => {
-            totalActive = particleSystem.getActiveParticleCount() +
-                trailSystem.getActiveParticleCount() +
-                raySystem.getActiveParticleCount();
-            countEl.textContent = totalActive;
-        }, 400);
-
-        // --- animasi ring & core ---
-        scene.registerBeforeRender(() => {
-            const time = Date.now() * 0.001;
-            if (ring1) {
-                ring1.rotation.z = time * 0.18;
-                ring2.rotation.y = time * 0.13;
-                ring2.rotation.x = Math.PI / 4 + Math.sin(time * 0.08) * 0.25;
-                ring3.rotation.z = time * 0.1;
-                ring3.rotation.x = Math.PI / 3 + Math.sin(time * 0.06 + 1) * 0.2;
+            const mat = new BABYLON.StandardMaterial('atomMat', scene);
+            mat.diffuseColor = color;
+            mat.specularColor = new BABYLON.Color3(0.8, 0.8, 0.9);
+            mat.specularPower = 48;
+            mat.roughness = 0.15;
+            mat.metallic = 0.3;
+            if (emissiveColor) {
+                mat.emissiveColor = emissiveColor;
+                mat.emissiveIntensity = 0.15;
             }
-            if (coreGlow) {
-                const scale = 1 + Math.sin(time * 2.5) * 0.08;
-                coreGlow.scaling.set(scale, scale, scale);
-            }
+            // efek glow halus
+            mat.ambientColor = color.scale(0.3);
+            sphere.material = mat;
+
+            return sphere;
+        }
+
+        // --- struktur NaCl (face-centered cubic) ---
+        // ukuran sel satuan: 2 unit (dari -1 ke 1)
+        const cellSize = 2.0;
+        const offset = cellSize / 2;
+
+        // posisi atom Cl⁻ (klorida) di sudut dan pusat muka
+        const clPositions = [
+            // sudut
+            [-1, -1, -1],
+            [-1, -1, 1],
+            [-1, 1, -1],
+            [-1, 1, 1],
+            [1, -1, -1],
+            [1, -1, 1],
+            [1, 1, -1],
+            [1, 1, 1],
+            // pusat muka
+            [0, -1, 0],
+            [0, 1, 0],
+            [-1, 0, 0],
+            [1, 0, 0],
+            [0, 0, -1],
+            [0, 0, 1]
+        ];
+
+        // posisi atom Na⁺ (natrium) di tepi dan pusat
+        const naPositions = [
+            // tepi (edge centers)
+            [-1, -1, 0],
+            [-1, 1, 0],
+            [1, -1, 0],
+            [1, 1, 0],
+            [-1, 0, -1],
+            [-1, 0, 1],
+            [1, 0, -1],
+            [1, 0, 1],
+            [0, -1, -1],
+            [0, -1, 1],
+            [0, 1, -1],
+            [0, 1, 1],
+            // pusat sel
+            [0, 0, 0]
+        ];
+
+        // warna dan ukuran
+        const clColor = new BABYLON.Color3(0.2, 0.6, 0.9); // biru terang
+        const naColor = new BABYLON.Color3(1.0, 0.8, 0.2); // kuning keemasan
+        const clSize = 0.55;
+        const naSize = 0.40;
+        const clEmissive = new BABYLON.Color3(0.1, 0.3, 0.6);
+        const naEmissive = new BABYLON.Color3(0.6, 0.4, 0.0);
+
+        // kumpulkan semua atom dalam grup
+        const atomGroup = new BABYLON.TransformNode('atomGroup', scene);
+        let atomCount = 0;
+
+        // --- buat atom Cl⁻ ---
+        clPositions.forEach(pos => {
+            const p = new BABYLON.Vector3(pos[0], pos[1], pos[2]);
+            const atom = createAtom(p, clColor, clSize, clEmissive);
+            atom.parent = atomGroup;
+            atomCount++;
         });
+
+        // --- buat atom Na⁺ ---
+        naPositions.forEach(pos => {
+            const p = new BABYLON.Vector3(pos[0], pos[1], pos[2]);
+            const atom = createAtom(p, naColor, naSize, naEmissive);
+            atom.parent = atomGroup;
+            atomCount++;
+        });
+
+        // --- tambahkan kerangka kubus (wireframe) untuk memperjelas struktur ---
+        const boxSize = 2.0;
+        const boxMat = new BABYLON.StandardMaterial('boxMat', scene);
+        boxMat.emissiveColor = new BABYLON.Color3(0.3, 0.5, 0.9);
+        boxMat.alpha = 0.12;
+        boxMat.wireframe = false;
+        boxMat.transparencyMode = BABYLON.StandardMaterial.MATERIAL_ALPHABLEND;
+
+        const box = BABYLON.MeshBuilder.CreateBox('box', { size: boxSize }, scene);
+        box.material = boxMat;
+        box.parent = atomGroup;
+
+        // garis tepi kubus (wireframe terang)
+        const edgeMat = new BABYLON.StandardMaterial('edgeMat', scene);
+        edgeMat.emissiveColor = new BABYLON.Color3(0.4, 0.7, 1);
+        edgeMat.alpha = 0.3;
+        edgeMat.wireframe = true;
+
+        const edgeBox = BABYLON.MeshBuilder.CreateBox('edgeBox', { size: boxSize * 1.001 }, scene);
+        edgeBox.material = edgeMat;
+        edgeBox.parent = atomGroup;
+
+        // --- tambahkan garis-garis penghubung (opsional) untuk menunjukkan ikatan ---
+        // buat beberapa garis dari pusat ke sudut untuk estetika
+        const linesMat = new BABYLON.LinesMaterial('linesMat', scene);
+        linesMat.color = new BABYLON.Color3(0.3, 0.6, 0.9);
+        linesMat.alpha = 0.08;
+        linesMat.opacity = 0.1;
+
+        // --- efek rotasi lambat ---
+        scene.registerBeforeRender(() => {
+            const time = Date.now() * 0.00015;
+            atomGroup.rotation.y = time;
+            atomGroup.rotation.x = Math.sin(time * 0.3) * 0.05;
+        });
+
+        // --- update counter atom ---
+        document.getElementById('atomCount').textContent = atomCount;
 
         // --- render loop ---
         engine.runRenderLoop(() => {
@@ -357,7 +395,7 @@
         // --- resize ---
         window.addEventListener('resize', () => engine.resize());
 
-        console.log('Visual Beta Partikel 3D - skala diperbesar');
+        console.log(`Visual NaCl 3D dengan ${atomCount} atom`);
     </script>
 </body>
 </html>
