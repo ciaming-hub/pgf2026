@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi & Kuis Fisika</title>
+  <!-- Font & styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: #f5f9fe;
+      padding: 2rem 1rem;
+      color: #0b1a33;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.8rem 2rem;
+      box-shadow: 0 12px 30px rgba(0,20,50,0.08);
+      border: 1px solid #e9eff6;
+    }
+    h2 {
+      font-weight: 600;
+      font-size: 1.6rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h2 small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #3a5a7a;
+      margin-left: 0.5rem;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    label {
+      font-weight: 500;
+      font-size: 0.95rem;
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #1e3a5f;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #dce4ed;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      background: #fafcff;
+      transition: 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2d7aff;
+      box-shadow: 0 0 0 4px rgba(45,122,255,0.1);
+    }
+    .soal-item {
+      background: #f8faff;
+      padding: 0.8rem 1.2rem;
+      border-radius: 18px;
+      margin-bottom: 0.6rem;
+      border-left: 4px solid #2d7aff;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .soal-item span {
+      font-weight: 500;
+      min-width: 40px;
+    }
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.5rem;
+    }
+    .checkbox-group label, .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 400;
+      color: #1a2e4a;
+      margin: 0;
+    }
+    .btn {
+      background: #1a3a6b;
+      color: white;
+      border: none;
+      padding: 0.8rem 2.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid #1a3a6b;
+    }
+    .btn:hover {
+      background: #0f2a4f;
+      transform: scale(0.97);
+    }
+    .btn-outline {
+      background: transparent;
+      color: #1a3a6b;
+      border: 1.5px solid #1a3a6b;
+    }
+    .btn-outline:hover {
+      background: #e9f0fe;
+    }
+    .sim-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .sim-params {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      background: #f2f7ff;
+      padding: 1rem 1.5rem;
+      border-radius: 24px;
+    }
+    .param-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .param-item label {
+      margin: 0;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: #1e3a5f;
+      white-space: nowrap;
+    }
+    .param-item input {
+      width: 80px;
+      padding: 0.4rem 0.6rem;
+      border-radius: 30px;
+      text-align: center;
+    }
+    .canvas-wrapper {
+      background: #eef4fc;
+      border-radius: 24px;
+      padding: 0.5rem;
+      position: relative;
+    }
+    #simCanvas {
+      width: 100%;
+      height: auto;
+      background: white;
+      border-radius: 20px;
+      display: block;
+      box-shadow: inset 0 0 0 1px #d0ddee;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .chart-card {
+      background: #f8fcff;
+      border-radius: 18px;
+      padding: 0.8rem;
+      border: 1px solid #dfe9f5;
+    }
+    .chart-card h4 {
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #3c5a7a;
+      margin-bottom: 0.3rem;
+    }
+    .mini-chart {
+      height: 50px;
+      background: #ffffff;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      padding: 4px 6px;
+    }
+    .bar {
+      flex: 1;
+      background: #2d7aff;
+      border-radius: 8px 8px 4px 4px;
+      height: calc(20% + 10% * var(--v, 0.5));
+      min-height: 6px;
+      transition: 0.2s;
+    }
+    .ruler-area {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .ruler {
+      writing-mode: vertical-lr;
+      background: #e1eaf5;
+      border-radius: 40px;
+      padding: 0.5rem 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #1d3f66;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      cursor: grab;
+      user-select: none;
+      width: 36px;
+      border: 1px solid #b9cee8;
+    }
+    .ruler:active { cursor: grabbing; }
+    .ruler-value {
+      font-weight: 700;
+      background: #0b1a33;
+      color: white;
+      padding: 0.1rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem 1.5rem;
+    }
+    .mt-2 { margin-top: 1rem; }
+    .text-small { font-size: 0.85rem; color: #3f5f7f; }
+    hr { border: none; border-top: 1px solid #dce4ed; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ============ FILE 1: index.html (Halaman Utama) ============ -->
+  <div class="card" id="indexPage">
+    <h2>📘 Kuis Fisika <small>10 soal (5 checkbox + 4 benar-salah)</small></h2>
+    <form id="quizForm">
+      <div class="form-group">
+        <label>Nama Siswa</label>
+        <input type="text" id="studentName" placeholder="Masukkan nama lengkap" required>
+      </div>
+
+      <!-- 5 soal checkbox (pilihan ganda) -->
+      <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 600;">Soal pilihan ganda (checkbox)</div>
+      <div id="checkboxQuestions">
+        <!-- diisi JS -->
+      </div>
+
+      <!-- 4 soal benar-salah -->
+      <div style="margin: 1.5rem 0 0.5rem 0; font-weight: 600;">Soal benar-salah</div>
+      <div id="truefalseQuestions">
+        <!-- diisi JS -->
+      </div>
+
+      <div class="flex-row mt-2">
+        <button type="submit" class="btn">📤 Kirim Jawaban</button>
+        <span class="text-small" id="submitStatus"></span>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============ FILE 2: simulasi.html (Halaman Simulasi) ============ -->
+  <div class="card" id="simulasiPage">
+    <h2>⚙️ Simulasi Bola dalam Fluida <small>drag & parameter</small></h2>
+    <div class="sim-panel">
+      <div class="sim-params">
+        <div class="param-item"><label>Radius (m)</label><input type="number" id="radius" value="0.5" step="0.1" min="0.1"></div>
+        <div class="param-item"><label>ρ benda (kg/m³)</label><input type="number" id="rhoBenda" value="800" step="50"></div>
+        <div class="param-item"><label>ρ fluida (kg/m³)</label><input type="number" id="rhoFluida" value="1000" step="50"></div>
+        <div class="param-item"><label>Massa (kg)</label><input type="number" id="massa" value="0.6" step="0.1"></div>
+        <div class="param-item"><label>Konstanta pegas (N/m)</label><input type="number" id="kPegas" value="20" step="1"></div>
+        <div class="param-item"><label>Gravitasi (m/s²)</label><input type="number" id="gravitasi" value="9.8" step="0.1"></div>
+        <div class="param-item"><label>Gaya gesek (N)</label><input type="number" id="gayaGesek" value="0.5" step="0.1"></div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="simCanvas" width="800" height="300"></canvas>
+        <div class="ruler-area">
+          <div class="ruler" id="verticalRuler">📏 geser ▼</div>
+          <div class="ruler-value" id="rulerValue">0.0 m</div>
+        </div>
+      </div>
+
+      <!-- 3 grafik mini (bar) -->
+      <div class="chart-grid">
+        <div class="chart-card"><h4>Kecepatan</h4><div class="mini-chart" id="chartSpeed"><div class="bar" style="--v:0.3"></div><div class="bar" style="--v:0.7"></div><div class="bar" style="--v:0.5"></div><div class="bar" style="--v:0.9"></div><div class="bar" style="--v:0.4"></div></div></div>
+        <div class="chart-card"><h4>Energi kinetik</h4><div class="mini-chart" id="chartEnergy"><div class="bar" style="--v:0.6"></div><div class="bar" style="--v:0.2"></div><div class="bar" style="--v:0.8"></div><div class="bar" style="--v:0.5"></div><div class="bar" style="--v:0.7"></div></div></div>
+        <div class="chart-card"><h4>Posisi</h4><div class="mini-chart" id="chartPos"><div class="bar" style="--v:0.1"></div><div class="bar" style="--v:0.6"></div><div class="bar" style="--v:0.3"></div><div class="bar" style="--v:0.8"></div><div class="bar" style="--v:0.2"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FILE 3: Code.gs (Google Apps Script) ============ -->
+  <div class="card" style="background: #eaf2fd;">
+    <h2>📄 Code.gs <small>Google Apps Script (backend)</small></h2>
+    <pre style="background: #0b1a2f; color: #d4e6ff; padding: 1.2rem; border-radius: 20px; overflow-x: auto; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word;">
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([new Date(), data.nama, data.jawaban]);
+  return ContentService.createTextOutput("OK");
+}
+    </pre>
+    <p class="text-small" style="margin-top: 0.5rem;">🔹 Script menerima data dari form & menulis ke Google Sheets. Simpan sebagai Code.gs di Apps Script.</p>
+  </div>
+</div>
+
+<script>
+  (function(){
+    // -------------------- Soal (5 checkbox + 4 benar-salah) --------------------
+    const checkboxSoal = [
+      { q: "Hukum Newton tentang gerak", options: ["Hukum I", "Hukum II", "Hukum III", "Hukum Gravitasi"] },
+      { q: "Satuan gaya dalam SI", options: ["Newton", "Joule", "Watt", "Pascal"] },
+      { q: "Besaran pokok", options: ["Panjang", "Massa", "Waktu", "Suhu"] },
+      { q: "Termometer mengukur", options: ["Suhu", "Tekanan", "Volume", "Massa"] },
+      { q: "Cahaya merambat lurus", options: ["Benar", "Salah", "Tergantung medium", "Tidak pasti"] }
+    ];
+    const tfSoal = [
+      { q: "Percepatan gravitasi di Bumi ≈ 9,8 m/s²", benar: true },
+      { q: "Energi kinetik berbanding lurus dengan massa", benar: true },
+      { q: "Momen inersia hanya bergantung pada massa", benar: false },
+      { q: "Tekanan hidrostatis bergantung pada kedalaman", benar: true }
+    ];
+
+    const containerCheck = document.getElementById('checkboxQuestions');
+    checkboxSoal.forEach((s, idx) => {
+      const div = document.createElement('div');
+      div.className = 'soal-item';
+      div.innerHTML = `<span>${idx+1}.</span><div class="checkbox-group">` +
+        s.options.map((opt, oi) => 
+          `<label><input type="checkbox" name="cb${idx}" value="${opt}"> ${opt}</label>`
+        ).join('') + `</div>`;
+      containerCheck.appendChild(div);
+    });
+
+    const containerTF = document.getElementById('truefalseQuestions');
+    tfSoal.forEach((s, idx) => {
+      const div = document.createElement('div');
+      div.className = 'soal-item';
+      div.innerHTML = `<span>${idx+6}.</span><div class="radio-group">` +
+        `<label><input type="radio" name="tf${idx}" value="true"> Benar</label>` +
+        `<label><input type="radio" name="tf${idx}" value="false"> Salah</label>` +
+        `</div><span style="font-size:0.8rem; color:#3f5f7f; margin-left:auto;">${s.q}</span>`;
+      containerTF.appendChild(div);
+    });
+
+    // Submit form (simulasi kirim ke Google Sheets via Apps Script)
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nama = document.getElementById('studentName').value.trim();
+      if (!nama) { alert('Masukkan nama siswa'); return; }
+
+      // kumpulkan jawaban checkbox
+      let jawaban = [];
+      for (let i=0; i<checkboxSoal.length; i++) {
+        const checked = document.querySelectorAll(`input[name="cb${i}"]:checked`);
+        const vals = Array.from(checked).map(el => el.value);
+        jawaban.push(`CB${i+1}:` + (vals.length ? vals.join(',') : 'kosong'));
+      }
+      // kumpulkan jawaban benar-salah
+      for (let i=0; i<tfSoal.length; i++) {
+        const selected = document.querySelector(`input[name="tf${i}"]:checked`);
+        jawaban.push(`TF${i+1}:` + (selected ? selected.value : 'kosong'));
+      }
+
+      const payload = { nama, jawaban: jawaban.join(' | ') };
+      // Kirim ke Google Apps Script (URL endpoint diganti dengan milik sendiri)
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbz.../exec'; // ganti dengan URL nyata
+
+      // Tampilkan status (simulasi)
+      const statusEl = document.getElementById('submitStatus');
+      statusEl.textContent = '⏳ Mengirim...';
+
+      fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors', // karena tidak perlu response, hanya kirim
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        statusEl.textContent = '✅ Data terkirim (simulasi)';
+      }).catch(() => {
+        statusEl.textContent = '⚠️ Gagal kirim (cek URL)';
+      });
+    });
+
+    // -------------------- SIMULASI BOLA (Canvas + parameter) --------------------
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    let time = 0;
+    let posY = 50; // posisi bola (y)
+    let velY = 0;
+
+    // parameter
+    const radiusInput = document.getElementById('radius');
+    const rhoBendaInput = document.getElementById('rhoBenda');
+    const rhoFluidaInput = document.getElementById('rhoFluida');
+    const massaInput = document.getElementById('massa');
+    const kPegasInput = document.getElementById('kPegas');
+    const gravitasiInput = document.getElementById('gravitasi');
+    const gayaGesekInput = document.getElementById('gayaGesek');
+    const rulerValue = document.getElementById('rulerValue');
+
+    // drag ruler
+    const ruler = document.getElementById('verticalRuler');
+    let isDragging = false;
+    ruler.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const y = (e.clientY - rect.top) / rect.height;
+      const clamped = Math.min(1, Math.max(0, y));
+      const meter = (1 - clamped) * 2.0; // 0-2 meter
+      rulerValue.textContent = meter.toFixed(2) + ' m';
+    });
+
+    function drawSimulation() {
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      
+      // Gambar fluida (background)
+      ctx.fillStyle = '#cfe2ff';
+      ctx.fillRect(0, 0, w, h);
+      // garis batas
+      ctx.strokeStyle = '#2d5f9e';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 80);
+      ctx.lineTo(w, 80);
+      ctx.stroke();
+
+      // Bola (posisi)
+      const rad = parseFloat(radiusInput.value) * 40 + 10;
+      const x = 200;
+      const y = Math.min(h - rad, Math.max(rad, posY));
+      ctx.beginPath();
+      ctx.arc(x, y, rad, 0, 2*Math.PI);
+      ctx.fillStyle = '#e64539';
+      ctx.shadowColor = 'rgba(0,0,0,0.1)';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#a02020';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // label
+      ctx.fillStyle = '#0b1a33';
+      ctx.font = 'bold 14px Inter';
+      ctx.fillText('⚪ bola', x+rad+10, y-6);
+
+      // update posisi berdasarkan parameter (sederhana)
+      const dt = 0.05;
+      const r = parseFloat(radiusInput.value);
+      const rhoB = parseFloat(rhoBendaInput.value);
+      const rhoF = parseFloat(rhoFluidaInput.value);
+      const m = parseFloat(massaInput.value) || 0.5;
+      const k = parseFloat(kPegasInput.value) || 10;
+      const g = parseFloat(gravitasiInput.value) || 9.8;
+      const fGesek = parseFloat(gayaGesekInput.value) || 0.2;
+
+      // Gaya apung (Archimedes) + berat + pegas (sederhana)
+      const volume = (4/3) * Math.PI * r*r*r;
+      const berat = m * g;
+      const apung = rhoF * volume * g;
+      const gayaPegas = -k * (posY - 100) / 100; 
+      const gayaTotal = -berat + apung + gayaPegas - fGesek * velY;
+      const acc = gayaTotal / m;
+      velY += acc * dt;
+      posY += velY * dt;
+
+      // batas
+      if (posY < 20) { posY = 20; velY *= -0.3; }
+      if (posY > h-20) { posY = h-20; velY *= -0.3; }
+
+      // update grafik mini (dinamis)
+      const charts = [
+        document.querySelector('#chartSpeed .bar'),
+        document.querySelector('#chartEnergy .bar'),
+        document.querySelector('#chartPos .bar')
+      ];
+      if (charts.length) {
+        const speedNorm = Math.min(1, Math.abs(velY) / 5);
+        const energyNorm = Math.min(1, (0.5*m*velY*velY)/20);
+        const posNorm = Math.min(1, posY / h);
+        charts.forEach((bar, i) => {
+          if (bar) {
+            const val = i===0 ? speedNorm : i===1 ? energyNorm : posNorm;
+            bar.style.setProperty('--v', Math.max(0.1, val));
+          }
+        });
+      }
+
+      // ruler value update otomatis (posisi y)
+      const meterY = (1 - (posY / h)) * 2.0;
+      rulerValue.textContent = meterY.toFixed(2) + ' m';
+
+      requestAnimationFrame(drawSimulation);
+    }
+
+    // start sim
+    drawSimulation();
+
+    // reset posisi saat parameter diubah (opsional)
+    document.querySelectorAll('.sim-params input').forEach(inp => {
+      inp.addEventListener('change', () => { posY = 50; velY = 0; });
+    });
+
+  })();
+</script>
+</body>
+</html>
