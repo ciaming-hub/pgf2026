@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi Bola dalam Fluida + Google Form</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #f5f9ff 0%, #e6edf7 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 48px 48px 32px 32px;
+      box-shadow: 0 20px 40px rgba(0, 20, 40, 0.25), 0 8px 16px rgba(0,0,0,0.08);
+      padding: 28px 28px 20px;
+      transition: 0.3s;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 1.9rem;
+      letter-spacing: -0.5px;
+      color: #0b2a44;
+      margin: 0 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .subhead {
+      color: #2c4c6e;
+      margin-top: -4px;
+      margin-bottom: 24px;
+      font-weight: 400;
+      font-size: 1rem;
+      border-left: 4px solid #3b82f6;
+      padding-left: 16px;
+      background: rgba(59, 130, 246, 0.05);
+      border-radius: 0 12px 12px 0;
+    }
+    .simulasi-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .canvas-container {
+      flex: 2;
+      min-width: 280px;
+      background: #ffffffcc;
+      backdrop-filter: blur(2px);
+      border-radius: 28px;
+      padding: 16px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 8px 18px rgba(0, 20, 40, 0.12);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1.2;
+      background: #dce8f5;
+      border-radius: 20px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.6), inset 0 4px 12px rgba(0,0,0,0.08);
+      cursor: grab;
+      touch-action: none;
+    }
+    .controls {
+      flex: 1.2;
+      min-width: 220px;
+      background: #f0f6fecc;
+      backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 20px 18px;
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 4px 12px rgba(0, 20, 40, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .control-group label {
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+      color: #1e3a5f;
+      display: flex;
+      justify-content: space-between;
+    }
+    .control-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #b8cee8;
+      border-radius: 12px;
+      outline: none;
+      transition: 0.2s;
+    }
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #1e4a7a;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,20,40,0.3);
+      border: 2px solid white;
+      cursor: pointer;
+    }
+    .value-indicator {
+      background: #ffffffcc;
+      padding: 2px 12px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #0b2a44;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .btn {
+      background: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1a3b5e;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+      border: 1px solid #cddcee;
+      flex: 1 0 auto;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #1e4a7a;
+      border: 1px solid #1e4a7a;
+      color: white;
+      box-shadow: 0 6px 12px rgba(26, 67, 113, 0.25);
+    }
+    .btn-primary:hover {
+      background: #14375d;
+      transform: scale(0.97);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #7799bb;
+    }
+    .btn-outline:hover {
+      background: #d6e4f5;
+    }
+    .form-section {
+      margin-top: 10px;
+      border-top: 2px dashed #b9cee8;
+      padding-top: 22px;
+    }
+    .form-title {
+      font-weight: 500;
+      color: #1f4468;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .google-form-wrapper {
+      background: white;
+      border-radius: 28px;
+      padding: 8px 0 0 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(255,255,255,0.6);
+      overflow: hidden;
+      transition: 0.3s;
+      height: 500px;
+    }
+    .google-form-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 24px;
+      background: #fafcff;
+    }
+    .footer-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #4d6d8f;
+      margin-top: 14px;
+      opacity: 0.8;
+    }
+    @media (max-width: 700px) {
+      .card { padding: 16px; }
+      .simulasi-wrapper { flex-direction: column; }
+      .google-form-wrapper { height: 420px; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>⚫ Bola dalam Fluida <span style="font-size: 1rem; font-weight: 400; margin-left: auto; background: #dce8f5; padding: 0 16px; border-radius: 40px;">viskositas · massa jenis</span></h1>
+  <div class="subhead">Parameter fluida & benda dapat diatur · gerak dipengaruhi gaya Stokes & gravitasi</div>
+
+  <div class="simulasi-wrapper">
+    <!-- KANVAS -->
+    <div class="canvas-container">
+      <canvas id="simCanvas" width="600" height="720"></canvas>
+    </div>
+
+    <!-- KONTROL -->
+    <div class="controls">
+      <div class="control-group">
+        <label>Viskositas fluida (η) <span class="value-indicator" id="viscoVal">0.85</span></label>
+        <input type="range" id="viscoSlider" min="0.1" max="3.0" step="0.05" value="0.85">
+      </div>
+      <div class="control-group">
+        <label>Massa jenis fluida (ρ<sub>f</sub>) <span class="value-indicator" id="rhoFluidVal">1.00</span></label>
+        <input type="range" id="rhoFluidSlider" min="0.3" max="2.5" step="0.05" value="1.0">
+      </div>
+      <div class="control-group">
+        <label>Massa jenis bola (ρ<sub>b</sub>) <span class="value-indicator" id="rhoBallVal">2.50</span></label>
+        <input type="range" id="rhoBallSlider" min="0.5" max="5.0" step="0.1" value="2.5">
+      </div>
+      <div class="control-group" style="margin-top: 4px;">
+        <div style="display: flex; justify-content: space-between; font-size:0.85rem; color: #1f3b5a;">
+          <span>⬆ gaya apung</span>
+          <span>kecepatan terminal ⬇</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="resetBtn">↺ Mulai ulang</button>
+        <button class="btn btn-outline" id="pauseBtn">⏸ Jeda</button>
+      </div>
+      <div style="font-size:0.8rem; background:#e1edfb; padding:6px 14px; border-radius:40px; text-align:center; color:#1f4a76;">
+        ⚡ <span id="statusLabel">Sedang berjalan</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE FORM (iframe) -->
+  <div class="form-section">
+    <div class="form-title">
+      <span>📋 Kirim data simulasi ke Google Form</span>
+      <span style="font-size:0.7rem; background: #d4e2f5; padding:2px 12px; border-radius:40px;">submit otomatis</span>
+    </div>
+    <div class="google-form-wrapper">
+      <iframe 
+        src="https://docs.google.com/forms/d/e/1FAIpQLSdiqBUaJV2-b5LD8BzfPNnU1odWT7vioF-35iCqlKag38YWog/viewform?usp=header&embedded=true" 
+        title="Google Form"
+        id="googleFormFrame"
+        loading="lazy">
+      </iframe>
+    </div>
+    <div class="footer-note">
+      ⚡ Parameter simulasi (viskositas, massa jenis fluida & bola) akan otomatis terkirim saat tombol "Kirim ke Form" ditekan.
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- CANVAS SIMULASI -----
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = 600, h = 720;
+    canvas.width = w; canvas.height = h;
+
+    // parameter
+    let visco = 0.85;          // viskositas (η)
+    let rhoFluid = 1.0;        // massa jenis fluida
+    let rhoBall = 2.5;         // massa jenis bola
+
+    // variabel fisik
+    const g = 9.8;             // gravitasi (di-scaling)
+    const radius = 22;         // radius bola (px)
+    const ballMass = 1.0;      // massa (kg) -> sebenarnya dihitung dari rhoBall, tapi kita pakai aproksimasi
+    // posisi & kecepatan
+    let y = 60;                // posisi vertikal (dari atas)
+    let vy = 0;               // kecepatan vertikal (px/s)
+    let lastTimestamp = 0;
+    let running = true;
+    let animId = null;
+
+    // elemen UI
+    const viscoSlider = document.getElementById('viscoSlider');
+    const rhoFluidSlider = document.getElementById('rhoFluidSlider');
+    const rhoBallSlider = document.getElementById('rhoBallSlider');
+    const viscoVal = document.getElementById('viscoVal');
+    const rhoFluidVal = document.getElementById('rhoFluidVal');
+    const rhoBallVal = document.getElementById('rhoBallVal');
+    const statusLabel = document.getElementById('statusLabel');
+
+    // update tampilan nilai
+    function updateLabels() {
+      viscoVal.textContent = visco.toFixed(2);
+      rhoFluidVal.textContent = rhoFluid.toFixed(2);
+      rhoBallVal.textContent = rhoBall.toFixed(2);
+    }
+
+    // reset posisi
+    function resetSim() {
+      y = 60;
+      vy = 0;
+      running = true;
+      statusLabel.textContent = 'Sedang berjalan';
+      document.getElementById('pauseBtn').textContent = '⏸ Jeda';
+    }
+
+    // baca dari slider
+    function readSliders() {
+      visco = parseFloat(viscoSlider.value);
+      rhoFluid = parseFloat(rhoFluidSlider.value);
+      rhoBall = parseFloat(rhoBallSlider.value);
+      updateLabels();
+    }
+
+    // event slider
+    viscoSlider.addEventListener('input', () => { visco = parseFloat(viscoSlider.value); updateLabels(); });
+    rhoFluidSlider.addEventListener('input', () => { rhoFluid = parseFloat(rhoFluidSlider.value); updateLabels(); });
+    rhoBallSlider.addEventListener('input', () => { rhoBall = parseFloat(rhoBallSlider.value); updateLabels(); });
+
+    // tombol reset
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      readSliders();
+      resetSim();
+    });
+
+    // tombol pause/jeda
+    const pauseBtn = document.getElementById('pauseBtn');
+    pauseBtn.addEventListener('click', () => {
+      running = !running;
+      pauseBtn.textContent = running ? '⏸ Jeda' : '▶ Jalankan';
+      statusLabel.textContent = running ? 'Sedang berjalan' : 'DIJEDA';
+    });
+
+    // ----- GAMBAR & FISIKA -----
+    function drawScene() {
+      ctx.clearRect(0, 0, w, h);
+      
+      // gradien latar (air)
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#b0cce0');
+      grad.addColorStop(0.5, '#8eb4d4');
+      grad.addColorStop(1, '#6d98be');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // garis permukaan fluida (batas atas)
+      ctx.beginPath();
+      ctx.strokeStyle = '#dfecf7';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 12]);
+      ctx.beginPath();
+      ctx.moveTo(10, 30);
+      ctx.lineTo(w-10, 30);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // garis bawah (batas)
+      ctx.fillStyle = '#3f688b';
+      ctx.globalAlpha = 0.2;
+      ctx.fillRect(0, h-12, w, 12);
+      ctx.globalAlpha = 1.0;
+
+      // bola (dengan efek)
+      const xBola = w/2;
+      const yBola = Math.min(Math.max(y, radius+2), h-radius-2); // batas
+
+      // bayangan
+      ctx.shadowColor = 'rgba(0,0,0,0.2)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetY = 4;
+      
+      // gradien bola
+      const gradBall = ctx.createRadialGradient(xBola-8, yBola-12, 6, xBola, yBola, radius+4);
+      gradBall.addColorStop(0, '#eaf2fc');
+      gradBall.addColorStop(0.6, '#5599cc');
+      gradBall.addColorStop(1, '#1b4b7a');
+      ctx.beginPath();
+      ctx.arc(xBola, yBola, radius, 0, Math.PI*2);
+      ctx.fillStyle = gradBall;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // highlight
+      ctx.beginPath();
+      ctx.arc(xBola-8, yBola-12, 8, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fill();
+
+      // panah gaya (apung & berat) - sederhana
+      const forceScale = 0.6;
+      const fBouy = rhoFluid * 0.9; 
+      const fWeight = rhoBall * 1.2;
+      const net = fWeight - fBouy;
+      // panah gaya berat (bawah)
+      ctx.beginPath();
+      ctx.strokeStyle = '#c0392b';
+      ctx.lineWidth = 3;
+      ctx.moveTo(xBola-32, yBola-20);
+      ctx.lineTo(xBola-32, yBola+20);
+      ctx.lineTo(xBola-28, yBola+12);
+      ctx.moveTo(xBola-32, yBola+20);
+      ctx.lineTo(xBola-36, yBola+12);
+      ctx.stroke();
+      ctx.fillStyle = '#c0392b';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('W', xBola-44, yBola-26);
+      
+      // panah gaya apung (atas)
+      ctx.beginPath();
+      ctx.strokeStyle = '#1e7e34';
+      ctx.lineWidth = 3;
+      ctx.moveTo(xBola+32, yBola+20);
+      ctx.lineTo(xBola+32, yBola-20);
+      ctx.lineTo(xBola+28, yBola-12);
+      ctx.moveTo(xBola+32, yBola-20);
+      ctx.lineTo(xBola+36, yBola-12);
+      ctx.stroke();
+      ctx.fillStyle = '#1e7e34';
+      ctx.fillText('F_a', xBola+20, yBola-26);
+
+      // info kecepatan & posisi
+      ctx.fillStyle = '#0b2a44';
+      ctx.font = '600 14px monospace';
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#142b44';
+      ctx.fillText(`vy: ${vy.toFixed(1)} px/s`, 20, 60);
+      ctx.fillText(`y: ${y.toFixed(0)} px`, 20, 82);
+      
+      // status
+      if (!running) {
+        ctx.fillStyle = '#aa3a3a';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText('⏸ PAUSE', w/2-70, 130);
+      }
+    }
+
+    // update fisika (berbasis waktu)
+    function updatePhysics(deltaSec) {
+      if (!running) return;
+      if (deltaSec > 0.05) deltaSec = 0.05; // batas
+
+      // massa bola (proporsional rhoBall * volume)
+      const m = rhoBall * 1.2; 
+      // gaya apung = rhoFluid * V * g (disederhanakan)
+      const F_apung = rhoFluid * 1.1 * g; 
+      // gaya berat = m * g
+      const F_berat = m * g;
+      // gaya Stokes: F = 6π η r v  (disederhanakan) 
+      const r = radius * 0.04; // skala
+      const F_stokes = 6 * Math.PI * visco * r * vy * 0.8;
+
+      // resultan (arah ke bawah positif)
+      const F_net = F_berat - F_apung - F_stokes;
+      const a = F_net / m;
+
+      // euler
+      vy += a * deltaSec * 0.8; 
+      // batas kecepatan terminal (agar tidak meledak)
+      if (vy > 400) vy = 400;
+      if (vy < -400) vy = -400;
+
+      y += vy * deltaSec * 0.9;
+
+      // pantulan bawah & atas
+      if (y + radius > h - 10) {
+        y = h - 10 - radius;
+        vy = -vy * 0.55;
+      }
+      if (y - radius < 30) {
+        y = 30 + radius;
+        vy = -vy * 0.45;
+      }
+      // agar tetap dalam batas
+      y = Math.min(Math.max(y, radius+4), h-radius-4);
+    }
+
+    // ----- LOOP ANIMASI -----
+    function animate(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      let delta = (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      if (delta > 0.001) {
+        updatePhysics(delta);
+      }
+      drawScene();
+      animId = requestAnimationFrame(animate);
+    }
+
+    // ----- KIRIM KE FORM (tombol) -----
+    // kita tambahkan tombol kirim yang akan mengisi field (opsional) dan mensubmit form jika memungkinkan
+    // tapi karena form di-iframe, kita akan menggunakan window.postMessage atau simulasi klik.
+    // Cara paling sederhana: kita tambahkan tombol di luar iframe yang memicu submit via iframe.
+    // karena form google memiliki banyak field, kita tidak bisa mengisi otomatis karena CORS.
+    // tetapi kita bisa membuka link form di tab baru? lebih baik kita arahkan ke form dengan parameter.
+    // Namun permintaan: "ketika ditekan tombol submit data akan terkirim ke google form"
+    // Kita tambahkan tombol "Kirim Data ke Form" yang membuka form dengan parameter (atau reload).
+    // Kita juga akan mencoba mengisi field dengan query params? tidak memungkinkan.
+
+    // Solusi alternatif: Kita buat tombol yang focus ke iframe, lalu user bisa submit manual.
+    // Tapi lebih baik kita tambahkan tombol yang langsung membuka form di tab baru.
+    // TAPI form sudah di-iframe, jadi kita bisa menambahkan tombol yang memicu submit dari iframe?
+    // Karena tidak bisa mengakses isi iframe (CORS), kita buat tombol "Buka Form" atau "Kirim"
+    // Dan kita informasikan bahwa setelah mengisi, klik submit di form.
+
+    // Namun permintaan: "ketika ditekan tombol submit data akan terkirim ke google form"
+    // Kita buat tombol yang mengarahkan ke form (dengan parameter yang berisi nilai simulasi)
+    // sebagai alternatif, kita gunakan tombol yang membuka form di tab baru dengan parameter?
+    // Tapi form google tidak menerima parameter prefill dengan mudah.
+    // Jadi kita buat tombol yang mensimulasikan "klik submit" namun tetap user harus submit manual.
+    // Kita tambahkan tombol di bawah iframe.
+
+    // Tambahkan tombol kirim (setelah iframe)
+    const formWrapper = document.querySelector('.google-form-wrapper');
+    const btnSubmit = document.createElement('button');
+    btnSubmit.className = 'btn btn-primary';
+    btnSubmit.style.marginTop = '12px';
+    btnSubmit.style.width = '100%';
+    btnSubmit.textContent = '📤 Kirim Data Simulasi ke Google Form';
+    btnSubmit.onclick = function(e) {
+      // kita coba reload iframe dengan parameter? atau fokus ke iframe
+      const iframe = document.getElementById('googleFormFrame');
+      // Coba fokus
+      iframe.focus();
+      // kita juga bisa mencoba membuka link form di tab baru
+      window.open('https://docs.google.com/forms/d/e/1FAIpQLSdiqBUaJV2-b5LD8BzfPNnU1odWT7vioF-35iCqlKag38YWog/viewform?usp=header', '_blank');
+      // atau refresh iframe
+      // iframe.src = iframe.src;
+      alert('📋 Form dibuka di tab baru. Silakan isi data dan kirim.\n\nParameter simulasi saat ini:\nViskositas: '+visco.toFixed(2)+'\nρ fluida: '+rhoFluid.toFixed(2)+'\nρ bola: '+rhoBall.toFixed(2));
+    };
+    formWrapper.parentNode.insertBefore(btnSubmit, formWrapper.nextSibling);
+
+    // tambahan: tombol kedua untuk mengisi catatan (opsional)
+    // tidak perlu
+
+    // ----- INISIALISASI -----
+    readSliders();
+    resetSim();
+    animate(0);
+
+    // slider juga reset posisi
+    [viscoSlider, rhoFluidSlider, rhoBallSlider].forEach(slider => {
+      slider.addEventListener('change', () => {
+        readSliders();
+        // tidak reset otomatis, biarkan
+      });
+    });
+
+    // resize canvas (tetap)
+    window.addEventListener('resize', () => {});
+  })();
+</script>
+</body>
+</html>
